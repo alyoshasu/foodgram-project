@@ -1,0 +1,14 @@
+{% extends "includes_main/base.html" %}
+{% block title %} {% endblock %}
+
+{% block content %}
+{% include 'includes_main/menu.html' %}
+<div class="card-list">
+    {% for recipe in page %}
+        {% include 'includes_main/recipe_item.html' %}
+    {% endfor %}
+</div>
+{% if page.has_other_pages %}
+    {% include 'includes_main/paginator.html' %}
+{% endif %}
+{% endblock %}
