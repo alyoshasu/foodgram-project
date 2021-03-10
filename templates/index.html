@@ -1,32 +1,32 @@
 {% extends "includes_main/base.html" %}
 
 {% block head %}
-<title>Рецепты</title>
-<link rel="stylesheet" href="../../static/pages/index.css">
+    <title>Рецепты</title>
+    <link rel="stylesheet" href="../../static/pages/index.css">
 {% endblock %}
 
 {% block content %}
-{% include 'includes_main/menu.html' %}
-<div class="card-list">
+    {% include 'includes_main/menu.html' %}
+    <div class="card-list">
     {% for recipe in page %}
         {% include 'recipes/includes_recipes/recipe_item.html' %}
     {% endfor %}
-</div>
-{% if page.has_other_pages %}
-    {% include 'includes_main/paginator.html' %}
-{% endif %}
+    </div>
+    {% if page.has_other_pages %}
+        {% include 'includes_main/paginator.html' %}
+    {% endif %}
 {% endblock %}
 
 {% block js %}
-<script src="../../static/js/components/MainCards.js"></script>
+    <script src="../../static/js/components/MainCards.js"></script>
 
-<script src="../../static/js/components/Purchases.js"></script>
-<script src="../../static/js/components/Favorites.js"></script>
+    <script src="../../static/js/components/Purchases.js"></script>
+    <script src="../../static/js/components/Favorites.js"></script>
 
-<script src="../../static/js/config/config.js"></script>
-<script src="../../static/js/components/CardList.js"></script>
-<script src="../../static/js/components/Header.js"></script>
+    <script src="../../static/js/config/config.js"></script>
+    <script src="../../static/js/components/CardList.js"></script>
+    <script src="../../static/js/components/Header.js"></script>
 
-<script src="../../static/js/api/Api.js"></script>
-<script src="../../static/index/indexAuth.js"></script>
+    <script src="../../static/js/api/Api.js"></script>
+    <script src="../../static/index/indexAuth.js"></script>
 {% endblock %}

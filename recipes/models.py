@@ -85,11 +85,6 @@ class Recipe(models.Model):
         verbose_name="Дата публикации",
     )
 
-    def taglist(self):
-        return self.tags
-
-
-
     # def is_tag(self):
     #     return self.tag in {
     #         self.BREAKFAST,
@@ -105,3 +100,17 @@ class Recipe(models.Model):
 
     class Meta:
         ordering = ["-pub_date"]
+
+
+class Total_ingredients(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ingredients_count',
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='total_in_product',
+    )
+    quantity = models.IntegerField()

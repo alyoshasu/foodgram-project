@@ -19,8 +19,11 @@ def index(request):
 
 
 def recipe(request, slug):
-    return HttpResponse("You're looking at recipe '%s'." % get_object_or_404(
-        Recipe,
-        slug=slug,
-    ).title
-                        )
+    recipe = get_object_or_404(Recipe, slug=slug)
+
+    return render(
+        request,
+        "recipes/recipe_view.html",
+        {'recipe': recipe},
+    )
+
