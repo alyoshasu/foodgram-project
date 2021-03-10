@@ -8,7 +8,6 @@ from recipes.models import Recipe
 def index(request):
     recipe_list = Recipe.objects.all()
     paginator = Paginator(recipe_list, 10)
-
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 

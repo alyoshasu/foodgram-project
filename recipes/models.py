@@ -1,6 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class Ingredient(models.Model):
@@ -19,15 +22,25 @@ class Ingredient(models.Model):
         return self.title
 
 
+class Tag(models.Model):
+    title = models.CharField(
+        max_length=50,
+        verbose_name="Название",
+    )
+
+    def __str__(self):
+        return self.title
+
+
 class Recipe(models.Model):
-    BREAKFAST = 'BR'
-    LUNCH = 'LN'
-    DINNER = 'DN'
-    TAG_CHOICES = [
-        (BREAKFAST, 'Breakfast'),
-        (LUNCH, 'Lunch'),
-        (DINNER, 'Dinner'),
-    ]
+    # BREAKFAST = 'BR'
+    # LUNCH = 'LN'
+    # DINNER = 'DN'
+    # TAG_CHOICES = [
+    #     (BREAKFAST, 'Breakfast'),
+    #     (LUNCH, 'Lunch'),
+    #     (DINNER, 'Dinner'),
+    # ]
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -49,10 +62,14 @@ class Recipe(models.Model):
         Ingredient,
         verbose_name="Ингредиенты",
     )
-    tag = models.CharField(
-        max_length=2,
-        choices=TAG_CHOICES,
-        default=DINNER,
+    # tag = models.CharField(
+    #     max_length=2,
+    #     choices=TAG_CHOICES,
+    #     default=DINNER,
+    #     verbose_name="Тег",
+    # )
+    tags = models.ManyToManyField(
+        Tag,
         verbose_name="Тег",
     )
     time = models.IntegerField(
@@ -68,15 +85,23 @@ class Recipe(models.Model):
         verbose_name="Дата публикации",
     )
 
-    def is_tag(self):
-        return self.tag in {
-            self.BREAKFAST,
-            self.LUNCH,
-            self.DINNER,
-        }
+    def taglist(self):
+        return self.tags
+
+
+
+    # def is_tag(self):
+    #     return self.tag in {
+    #         self.BREAKFAST,
+    #         self.LUNCH,
+    #         self.DINNER,
+    #     }
 
     def __str__(self):
         return self.title
 
     def was_published_recently(self):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+
+    class Meta:
+        ordering = ["-pub_date"]
