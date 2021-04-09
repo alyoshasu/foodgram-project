@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -8,7 +9,7 @@
     {% block head %}
     <!-- Содержимое страницы -->
     <title>Рецепты</title>
-    <link rel="stylesheet" href="../../static/pages/index.css">
+    <link rel="stylesheet" href="{% static 'pages/index.css' %}">
     {% endblock %}
 </head>
 <body class="body">

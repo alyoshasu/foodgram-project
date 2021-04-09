@@ -16,7 +16,6 @@ class Ingredient(models.Model):
         blank=True,
         verbose_name="ед. изм.",
     )
-    # quantity = models.IntegerField()
 
     def __str__(self):
         return self.title
@@ -33,14 +32,6 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    # BREAKFAST = 'BR'
-    # LUNCH = 'LN'
-    # DINNER = 'DN'
-    # TAG_CHOICES = [
-    #     (BREAKFAST, 'Breakfast'),
-    #     (LUNCH, 'Lunch'),
-    #     (DINNER, 'Dinner'),
-    # ]
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -62,12 +53,6 @@ class Recipe(models.Model):
         Ingredient,
         verbose_name="Ингредиенты",
     )
-    # tag = models.CharField(
-    #     max_length=2,
-    #     choices=TAG_CHOICES,
-    #     default=DINNER,
-    #     verbose_name="Тег",
-    # )
     tags = models.ManyToManyField(
         Tag,
         verbose_name="Тег",
@@ -85,13 +70,6 @@ class Recipe(models.Model):
         verbose_name="Дата публикации",
     )
 
-    # def is_tag(self):
-    #     return self.tag in {
-    #         self.BREAKFAST,
-    #         self.LUNCH,
-    #         self.DINNER,
-    #     }
-
     def __str__(self):
         return self.title
 
@@ -102,15 +80,18 @@ class Recipe(models.Model):
         ordering = ["-pub_date"]
 
 
-class Total_ingredients(models.Model):
+class Ingredient_quantity(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredients_count',
+        related_name='ingredients_quantity',
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='total_in_product',
+        related_name='in_recipe',
     )
     quantity = models.IntegerField()
+
+    class Meta:
+        unique_together = ['recipe', 'ingredient']
