@@ -18,11 +18,11 @@ from django.urls import include, path
 from django.conf import settings
 
 urlpatterns = [
+    path('api/', include('api_foodgram.urls')),
     path('admin/', admin.site.urls, name='recipes_list'),
     path('', include('recipes.urls')),
     path('auth/', include('users.urls')),
     path('auth/', include('django.contrib.auth.urls')),
-    # path('api/', include('api_foodgram.urls')),
 ]
 
 

@@ -1,22 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Tag, Recipe, Total_ingredients
-from users.models import Follow
-
+from recipes.models import Ingredient, Tag, Recipe, Ingredient_quantity
+from users.models import Follow, Purchase_quantity, Favorite
 User = get_user_model()
-
-
-class RecipeSerializer(serializers.ModelSerializer):
-	class Meta:
-		fields = '__all__'
-		model = Recipe
-
-
-class UserSerializer(serializers.ModelSerializer):
-	class Meta:
-		fields = '__all__'
-		model = User
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -25,13 +12,43 @@ class IngredientSerializer(serializers.ModelSerializer):
 		model = Ingredient
 
 
+class TagSerializer(serializers.ModelSerializer):
+	class Meta:
+		fields = '__all__'
+		model = Tag
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+	class Meta:
+		fields = '__all__'
+		model = Recipe
+
+
+class Ingredient_quantitySerializer(serializers.ModelSerializer):
+	class Meta:
+		fields = '__all__'
+		model = Ingredient_quantity
+
+
 class FollowSerializer(serializers.ModelSerializer):
 	class Meta:
 		fields = '__all__'
 		model = Follow
 
 
-class TagSerializer(serializers.ModelSerializer):
+class Purchase_quantitySerializer(serializers.ModelSerializer):
 	class Meta:
 		fields = '__all__'
-		model = Tag
+		model = Purchase_quantity
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+	class Meta:
+		fields = '__all__'
+		model = Favorite
+
+
+class UserSerializer(serializers.ModelSerializer):
+	class Meta:
+		fields = '__all__'
+		model = User

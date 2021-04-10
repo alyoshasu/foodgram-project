@@ -2,7 +2,7 @@ from django.db import models
 
 from django.contrib.auth import get_user_model
 
-from recipes.models import Ingredient
+from recipes.models import Ingredient, Recipe
 
 User = get_user_model()
 
@@ -41,3 +41,21 @@ class Purchase_quantity(models.Model):
 
 	class Meta:
 		unique_together = ['user', 'ingredient']
+
+
+class Favorite(models.Model):
+	user = models.ForeignKey(
+		User,
+		on_delete=models.CASCADE,
+		related_name='follows',
+		verbose_name="Пользователь",
+	)
+	recipe = models.ForeignKey(
+		Recipe,
+		on_delete=models.CASCADE,
+		related_name="followed",
+		verbose_name="Рецепт",
+	)
+
+	class Meta:
+		unique_together = ['user', 'recipe']

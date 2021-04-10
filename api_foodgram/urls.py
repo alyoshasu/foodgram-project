@@ -1,9 +1,7 @@
-# from django.urls import include, path
-# from rest_framework.routers import DefaultRouter
-#
-# from .views import (CategoryViewSet, CommentViewSet, ConfirmationCodeView,
-#                     GenreViewSet, ReviewViewSet, TitleViewSet, UserLoginView,
-#                     UserViewSet)
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+
+from .views import (IngredientViewSet, RecipeViewSet)
 #
 # v1_patterns = (
 #     [
@@ -12,8 +10,8 @@
 #     ]
 # )
 #
-# v1_router = DefaultRouter()
-# v1_router.register(r'titles', TitleViewSet, basename='TitlesView')
+v1_router = DefaultRouter()
+v1_router.register(r'ingredients', IngredientViewSet, basename='IngredientView')
 # v1_router.register(r'titles/(?P<title_id>\d+)/reviews',
 #                    ReviewViewSet, basename='ReviewsView')
 # v1_router.register(
@@ -30,6 +28,7 @@
 # v1_router.register(r'categories', CategoryViewSet)
 # v1_router.register(r'genres', GenreViewSet)
 #
-# urlpatterns = [
-#     path('v1/auth/', include(v1_patterns)),
-#     path('v1/', include(v1_router.urls)),
+urlpatterns = [
+    # path('v1/auth/', include(v1_patterns)),
+    path('v1/', include(v1_router.urls)),
+]
