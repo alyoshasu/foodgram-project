@@ -27,7 +27,7 @@ def index(request):
 
 def recipe(request, slug):
     recipe = get_object_or_404(Recipe, slug=slug)
-    ingredients = recipe.ingredients_count.all()
+    ingredients = recipe.ingredients_quantity.all()
     return render(
         request,
         "recipes/recipe_view.html",
@@ -87,7 +87,6 @@ def recipe_edit(request, slug):
     recipe = get_object_or_404(Recipe, slug=slug)
     if not recipe.author == request.user:
         return redirect('recipe', slug=slug)
-    # добавим в form свойство files
     form = RecipeForm(
         request.POST or None,
         files=request.FILES or None,
@@ -97,21 +96,19 @@ def recipe_edit(request, slug):
         return render(
             request,
             'recipes/recipe_new.html',
-            {
-                'recipe': recipe,
-                'form': form,
-                'is_edit': True
-            }
+            {'recipe': recipe,
+             'form': form,
+             'is_edit': True
+             }
         )
     if not form.is_valid():
         return render(
             request,
             'recipes/recipe_new.html',
-            {
-                'recipe': recipe,
-                'form': form,
-                'is_edit': True
-            }
+            {'recipe': recipe,
+             'form': form,
+             'is_edit': True
+             }
         )
     form.save()
     return redirect('recipe', slug=form.cleaned_data.get("slug"))

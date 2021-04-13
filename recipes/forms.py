@@ -10,7 +10,6 @@ class RecipeForm(forms.ModelForm):
 			'image',
 			'description',
 			'ingredients',
-
 			'tags',
 			'time',
 			'slug',

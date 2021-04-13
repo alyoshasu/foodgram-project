@@ -1,125 +1,61 @@
-
 class Api {
-    constructor(apiUrl) {
-        this.apiUrl =  apiUrl;
-    }
-  getPurchases () {
-    return fetch(`/purchases`, {
-      headers: {
-        'Content-Type': 'application/json'
+  constructor() {
+    this.apiUrl = '/api/v1';
+    this.headers = {
+      'Content-Type': 'application/json'
+    };
+  }
+
+  fetch(url, method, body) {
+    console.time(`Request ${method || 'GET'} => ${url}`)
+    return fetch(`${this.apiUrl}${url}`, {
+      headers: this.headers,
+      method: method || 'GET',
+      body: body || undefined
+    }).then(e => {
+      if (e.ok) {
+        return e.json()
       }
-    })
-      .then( e => {
-          if(e.ok) {
-              return e.json()
-          }
-          return Promise.reject(e.statusText)
-      })
+      return Promise.reject(e.statusText)
+    }).finally(() => console.timeEnd(`Request ${method || 'GET'} => ${url}`))
   }
-  addPurchases (id) {
-    return fetch(`/purchases`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: id
-      })
-    })
-      .then( e => {
-          if(e.ok) {
-              return e.json()
-          }
-          return Promise.reject(e.statusText)
-      })
+
+  getPurchases() {
+    return this.fetch('/purchases')
   }
-  removePurchases (id){
-    return fetch(`/purchases/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then( e => {
-          if(e.ok) {
-              return e.json()
-          }
-          return Promise.reject(e.statusText)
-      })
+
+  addPurchases(id) {
+    return this.fetch(`${this.apiUrl}/purchases`, 'POST', JSON.stringify({
+      id: id
+    }))
   }
+
+  removePurchases(id) {
+    return this.fetch(`${this.apiUrl}/purchases/${id}`, 'DELETE')
+  }
+
   addSubscriptions(id) {
-    return fetch(`/subscriptions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: id
-      })
-    })
-      .then( e => {
-          if(e.ok) {
-              return e.json()
-          }
-          return Promise.reject(e.statusText)
-      })
+    return this.fetch(`${this.apiUrl}/subscriptions`, 'POST', JSON.stringify({
+      id: id
+    }))
   }
-  removeSubscriptions (id) {
-    return fetch(`/subscriptions/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then( e => {
-          if(e.ok) {
-              return e.json()
-          }
-          return Promise.reject(e.statusText)
-      })
+
+  removeSubscriptions(id) {
+    return this.fetch(`${this.apiUrl}/subscriptions/${id}`, 'DELETE')
   }
-  addFavorites (id)  {
-    return fetch(`/favorites`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: id
-      })
-    })
-        .then( e => {
-            if(e.ok) {
-                return e.json()
-            }
-            return Promise.reject(e.statusText)
-        })
+
+  addFavorites(id) {
+    return this.fetch(`${this.apiUrl}/favorites`, 'POST', JSON.stringify({
+      id: id
+    }))
+
   }
-  removeFavorites (id) {
-    return fetch(`/favorites/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-        .then( e => {
-            if(e.ok) {
-                return e.json()
-            }
-            return Promise.reject(e.statusText)
-        })
+
+  removeFavorites(id) {
+    return this.fetch(`${this.apiUrl}/favorites/${id}`, 'DELETE')
   }
-    getIngredients  (text)  {
-        return fetch(`/api/v1/ingredients?search=${text}`, {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then( e => {
-                if(e.ok) {
-                    return e.json()
-                }
-                return Promise.reject(e.statusText)
-            })
-    }
+
+  getIngredients(text) {
+    return this.fetch(`/ingredients?search=${text}`)
+  }
 }

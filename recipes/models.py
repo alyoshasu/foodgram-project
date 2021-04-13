@@ -8,17 +8,17 @@ User = get_user_model()
 
 class Ingredient(models.Model):
     title = models.CharField(
-        max_length=200,
+        max_length=256,
         verbose_name="Название",
     )
     dimension = models.CharField(
-        max_length=50,
+        max_length=64,
         blank=True,
         verbose_name="ед. изм.",
     )
 
     def __str__(self):
-        return self.title
+        return '{}, {}'.format(self.title, self.dimension)
 
 
 class Tag(models.Model):
@@ -39,7 +39,7 @@ class Recipe(models.Model):
         verbose_name="Автор",
     )
     title = models.CharField(
-        max_length=200,
+        max_length=256,
         verbose_name="Название",
     )
     image = models.ImageField(
@@ -52,6 +52,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name="Ингредиенты",
+        # through='Ingredient_quantity',
     )
     tags = models.ManyToManyField(
         Tag,
