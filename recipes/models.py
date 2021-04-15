@@ -52,7 +52,8 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name="Ингредиенты",
-        # through='Ingredient_quantity',
+        through='IngredientRecipe',
+        related_name="recipes",
     )
     tags = models.ManyToManyField(
         Tag,
@@ -72,27 +73,25 @@ class Recipe(models.Model):
     )
 
     def __str__(self):
-        return self.title
-
-    def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        return self.slug
 
     class Meta:
         ordering = ["-pub_date"]
 
 
-class Ingredient_quantity(models.Model):
+class IngredientRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredients_quantity',
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='in_recipe',
     )
     quantity = models.IntegerField()
+
+    def __str__(self):
+        return '{} {} - {} в {}'.format(self.quantity, self.ingredient.dimension, self.ingredient.title, self.recipe.slug)
 
     class Meta:
         unique_together = ['recipe', 'ingredient']

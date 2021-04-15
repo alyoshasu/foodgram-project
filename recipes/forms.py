@@ -9,7 +9,7 @@ class RecipeForm(forms.ModelForm):
 			'title',
 			'image',
 			'description',
-			'ingredients',
+			# 'ingredients',
 			'tags',
 			'time',
 			'slug',

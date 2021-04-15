@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 
-from recipes.models import Recipe
+from recipes.models import Recipe, IngredientRecipe, Tag
 
 from datetime import datetime
 
@@ -27,7 +27,7 @@ def index(request):
 
 def recipe(request, slug):
     recipe = get_object_or_404(Recipe, slug=slug)
-    ingredients = recipe.ingredients_quantity.all()
+    ingredients = IngredientRecipe.objects.filter(recipe=recipe)
     return render(
         request,
         "recipes/recipe_view.html",
@@ -41,10 +41,10 @@ def recipe(request, slug):
 @login_required
 def follow(request):
     follow_list = User.objects.filter(following__user=request.user)
-    paginator = Paginator(follow_list, 10)  # показывать по 10 записей на странице.
+    paginator = Paginator(follow_list, 10)
 
-    page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
-    page = paginator.get_page(page_number)  # получить записи с нужным смещением
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
 
     return render(
         request,
@@ -73,12 +73,11 @@ def recipe_new(request):
             'recipes/recipe_new.html',
             {'form': form, 'is_edit': False}
         )
-
     recipe = form.save(commit=False)
     recipe.author = request.user
     recipe.pub_date = datetime.now()
     recipe.save()
-
+    form.save_m2m()
     return redirect('index')
 
 
@@ -110,7 +109,20 @@ def recipe_edit(request, slug):
              'is_edit': True
              }
         )
-    form.save()
+    print(form)
+    new_recipe = form.save()
+    # if 'breakfast' in request.POST:
+    #     new_recipe.tags.add(Tag.objects.get(title='Завтрак'))
+    # else:
+    #     new_recipe.tags.remove(Tag.objects.get(title='Завтрак'))
+    # if 'lunch' in request.POST:
+    #     new_recipe.tags.add(Tag.objects.get(title='Обед'))
+    # else:
+    #     new_recipe.tags.remove(Tag.objects.get(title='Обед'))
+    # if 'dinner' in request.POST:
+    #     new_recipe.tags.add(Tag.objects.get(title='Ужин'))
+    # else:
+    #     new_recipe.tags.remove(Tag.objects.get(title='Ужин'))
     return redirect('recipe', slug=form.cleaned_data.get("slug"))
 
 

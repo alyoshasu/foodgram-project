@@ -1,5 +1,10 @@
 <div class="card" data-id="120">
-    <a href="{% url 'recipe' recipe.slug %}" class="link" target="_blank"><img src="../../../../static/images/testCardImg.png" alt="Какой-то текст" class="card__image"></a>
+    <a href="{% url 'recipe' recipe.slug %}" class="link" target="_blank">
+        {% load thumbnail %}
+        {% thumbnail recipe.image "480x480" upscale=True as im %}
+        <img src="{{ im.url  }}" alt="Какой-то текст" class="card__image">
+        {% endthumbnail %}
+    </a>
     <div class="card__body">
         <a class="card__title link" href="{% url 'recipe' recipe.slug %}" target="_blank">{{ recipe.title }}</a>
         <ul class="card__items">

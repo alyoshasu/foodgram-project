@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, viewsets, filters
-from recipes.models import Ingredient, Tag, Recipe, Ingredient_quantity
+from recipes.models import Ingredient, Tag, Recipe, IngredientRecipe
 from users.models import Follow, Purchase_quantity, Favorite
-from .serializers import IngredientSerializer, TagSerializer, RecipeSerializer, Ingredient_quantitySerializer, FollowSerializer, Purchase_quantitySerializer, FavoriteSerializer
+from .serializers import IngredientSerializer, TagSerializer, RecipeSerializer, IngredientRecipeSerializer, FollowSerializer, Purchase_quantitySerializer, FavoriteSerializer
 User = get_user_model()
 
 
