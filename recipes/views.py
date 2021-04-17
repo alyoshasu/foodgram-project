@@ -7,7 +7,7 @@ from recipes.models import Recipe, IngredientRecipe, Tag
 
 from datetime import datetime
 
-from .forms import RecipeForm
+from .forms import RecipeForm, RecipeFormSet
 
 User = get_user_model()
 
@@ -34,7 +34,7 @@ def recipe(request, slug):
         {
             'recipe': recipe,
             'ingredients': ingredients,
-         },
+        },
     )
 
 
@@ -57,28 +57,46 @@ def follow(request):
 def recipe_new(request):
     if not request.method == 'POST':
         form = RecipeForm()
+        formset = RecipeFormSet
         return render(
             request,
             'recipes/recipe_new.html',
-            {'form': form, 'is_edit': False},
+            {'form': form, 'is_edit': False, 'formset': formset},
         )
 
     form = RecipeForm(
         request.POST,
         files=request.FILES or None,
     )
-    if not form.is_valid():
-        return render(
-            request,
-            'recipes/recipe_new.html',
-            {'form': form, 'is_edit': False}
+    formset = RecipeFormSet(
+        request.POST,
+    )
+    if form.is_valid():
+        new_recipe = form.save(commit=False)
+        new_recipe.author = request.user
+        new_recipe.pub_date = datetime.now()
+        formset = RecipeFormSet(
+            request.POST,
+            instance=new_recipe,
         )
-    recipe = form.save(commit=False)
-    recipe.author = request.user
-    recipe.pub_date = datetime.now()
-    recipe.save()
-    form.save_m2m()
-    return redirect('index')
+        if formset.is_valid():
+            new_recipe.save()
+            form.save_m2m()
+            formset.save()
+            return redirect('index')
+    return render(
+        request,
+        'recipes/recipe_new.html',
+        {'form': form, 'is_edit': False, 'formset': formset},
+    )
+
+
+    # recipe = form.save(commit=False)
+    # recipe.author = request.user
+    # recipe.pub_date = datetime.now()
+    # recipe.save()
+    # form.save_m2m()
+    # return redirect('index')
 
 
 @login_required
@@ -91,39 +109,67 @@ def recipe_edit(request, slug):
         files=request.FILES or None,
         instance=recipe,
     )
+    formset = RecipeFormSet(
+        request.POST or None,
+        instance=recipe,
+    )
     if not request.method == 'POST':
+        # return render(
+        #     request,
+        #     'recipes/recipe_new.html',
+        #     {'recipe': recipe,
+        #      'form': form,
+        #      'is_edit': True
+        #      }
+        # )
         return render(
             request,
             'recipes/recipe_new.html',
             {'recipe': recipe,
              'form': form,
-             'is_edit': True
-             }
+             'is_edit': True,
+             'formset': formset
+             },
         )
-    if not form.is_valid():
-        return render(
-            request,
-            'recipes/recipe_new.html',
-            {'recipe': recipe,
-             'form': form,
-             'is_edit': True
-             }
+
+    if form.is_valid():
+        # form.save()
+        formset = RecipeFormSet(
+            request.POST,
+            instance=recipe,
         )
-    print(form)
-    new_recipe = form.save()
-    # if 'breakfast' in request.POST:
-    #     new_recipe.tags.add(Tag.objects.get(title='Завтрак'))
-    # else:
-    #     new_recipe.tags.remove(Tag.objects.get(title='Завтрак'))
-    # if 'lunch' in request.POST:
-    #     new_recipe.tags.add(Tag.objects.get(title='Обед'))
-    # else:
-    #     new_recipe.tags.remove(Tag.objects.get(title='Обед'))
-    # if 'dinner' in request.POST:
-    #     new_recipe.tags.add(Tag.objects.get(title='Ужин'))
-    # else:
-    #     new_recipe.tags.remove(Tag.objects.get(title='Ужин'))
-    return redirect('recipe', slug=form.cleaned_data.get("slug"))
+        if formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect('recipe', slug=form.cleaned_data.get("slug"))
+    return render(
+        request,
+        'recipes/recipe_new.html',
+        {'recipe': recipe,
+         'form': form,
+         'is_edit': True,
+         'formset': formset,
+         }
+    )
+
+    # if form.is_valid():
+    #     new_recipe = form.save(commit=False)
+    #     new_recipe.author = request.user
+    #     new_recipe.pub_date = datetime.now()
+    #     formset = RecipeFormSet(
+    #         request.POST,
+    #         instance=new_recipe,
+    #     )
+    #     if formset.is_valid():
+    #         new_recipe.save()
+    #         form.save_m2m()
+    #         formset.save()
+    #         return redirect('index')
+    # return render(
+    #     request,
+    #     'recipes/recipe_new.html',
+    #     {'form': form, 'is_edit': False, 'formset': formset},
+    # )
 
 
 def list_download(request):
