@@ -4,30 +4,47 @@
 </div>
 <div class="card-user__body">
     <ul class="card-user__items">
+        {% if author.recipes.all.0 %}
         <li class="card-user__item">
             <div class="recipe">
-                <img src="recipes/static/images/testCardImg.png" alt="какой-то-текст" class="recipe__image">
-                <h3 class="recipe__title">{{ author.recipes.all }}</h3>
-                <p class="recipe__text"><span class="icon-time"></span> 20 мин.</p>
+                {% load thumbnail %}
+                {% thumbnail author.recipes.all.0.image "480x480" upscale=True as im %}
+                <img src="{{ im.url  }}" alt="какой-то-текст" class="recipe__image">
+                {% endthumbnail %}
+                <h3 class="recipe__title">{{ author.recipes.all.0.title }}</h3>
+                <p class="recipe__text"><span class="icon-time"></span> {{ author.recipes.all.0.time }} мин.</p>
             </div>
         </li>
+        {% endif %}
+        {% if author.recipes.all.1 %}
         <li class="card-user__item">
             <div class="recipe">
-                <img src="recipes/static/images/testCardImg.png" alt="какой-то-текст" class="recipe__image">
-                <h3 class="recipe__title">Французские тосты</h3>
-                <p class="recipe__text"><span class="icon-time"></span> 20 мин.</p>
+                {% load thumbnail %}
+                {% thumbnail author.recipes.all.1.image "480x480" upscale=True as im %}
+                <img src="{{ im.url  }}" alt="какой-то-текст" class="recipe__image">
+                {% endthumbnail %}
+                <h3 class="recipe__title">{{ author.recipes.all.1.title }}</h3>
+                <p class="recipe__text"><span class="icon-time"></span> {{ author.recipes.all.1.title }} мин.</p>
             </div>
         </li>
+        {% endif %}
+        {% if author.recipes.all.2 %}
         <li class="card-user__item">
             <div class="recipe">
-                <img src="recipes/static/images/testCardImg.png" alt="какой-то-текст" class="recipe__image">
-                <h3 class="recipe__title">Французские тосты</h3>
-                <p class="recipe__text"><span class="icon-time"></span> 20 мин.</p>
+                {% load thumbnail %}
+                {% thumbnail author.recipes.all.2.image "480x480" upscale=True as im %}
+                <img src="{{ im.url  }}" alt="какой-то-текст" class="recipe__image">
+                {% endthumbnail %}
+                <h3 class="recipe__title">{{ author.recipes.all.2.title }}</h3>
+                <p class="recipe__text"><span class="icon-time"></span> {{ author.recipes.all.2.title }} мин.</p>
             </div>
         </li>
+        {% endif %}
+        {% if author.recipes.all.count > 3 %}
         <li class="card-user__item">
-            <a href="#" class="card-user__link link">Еще 7 рецептов...</a>
+            <a href="{% url 'profile' author.username %}" class="card-user__link link">Еще {{ author.recipes.all.count|add:"-3" }} рецептов...</a>
         </li>
+        {% endif %}
     </ul>
 </div>
 <div class="card-user__footer">

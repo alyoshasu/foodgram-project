@@ -24,7 +24,7 @@
         </div>
         <ul class="single-card__items">
             {% for tag in recipe.tags.all %}
-            {% if tag.title == 'brealfast'%}
+            {% if tag.title == 'breakfast'%}
             <li class="single-card__item"><span class="badge badge_style_orange">Завтрак</span></li>
             {% elif tag.title == 'lunch'%}
             <li class="single-card__item"><span class="badge badge_style_green">Обед</span></li>
@@ -44,7 +44,9 @@
         </div>
         <ul class="single-card__items">
             <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
+            {% if user.is_authenticated %}
             <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
+            {% endif %}
         </ul>
         <div class="single-card__section">
             <h3 class="single-card__section-title">Ингридиенты:</h3>

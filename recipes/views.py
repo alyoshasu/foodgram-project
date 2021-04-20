@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 
-from recipes.models import Recipe, IngredientRecipe, Tag
+from recipes.models import Recipe, IngredientRecipe, Ingredient
 
 from datetime import datetime
 
-from .forms import RecipeForm, RecipeFormSet
+from users.models import Follow
+from .forms import RecipeForm
 
 User = get_user_model()
 
@@ -21,18 +22,54 @@ def index(request):
     return render(
         request,
         "index.html",
-        {'page': page, 'paginator': paginator},
+        {
+            'page': page,
+            'paginator': paginator
+        },
     )
 
 
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+    user_recipes = user.recipes.all()
+    paginator = Paginator(user_recipes, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    following = following_check(request.user, username)
+    return render(
+        request,
+        'index.html',
+        {
+            'author': user,
+            'page': page,
+            'paginator': paginator,
+            'following': following,
+        },
+    )
+
+
+def following_check(user, author_username):
+    if not user.is_authenticated:
+        return False
+    try:
+        following = Follow.objects.get(
+            author__username=author_username,
+            user=user,
+        )
+    except Follow.DoesNotExist:
+        following = False
+    return following
+
+
 def recipe(request, slug):
-    recipe = get_object_or_404(Recipe, slug=slug)
-    ingredients = IngredientRecipe.objects.filter(recipe=recipe)
+    recipe_item = get_object_or_404(Recipe, slug=slug)
+    ingredients = IngredientRecipe.objects.filter(recipe=recipe_item)
+
     return render(
         request,
         "recipes/recipe_view.html",
         {
-            'recipe': recipe,
+            'recipe': recipe_item,
             'ingredients': ingredients,
         },
     )
@@ -42,14 +79,16 @@ def recipe(request, slug):
 def follow(request):
     follow_list = User.objects.filter(following__user=request.user)
     paginator = Paginator(follow_list, 10)
-
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
     return render(
         request,
         'authors/follow.html',
-        {'page': page, 'paginator': paginator},
+        {
+            'page': page,
+            'paginator': paginator
+        },
     )
 
 
@@ -57,119 +96,109 @@ def follow(request):
 def recipe_new(request):
     if not request.method == 'POST':
         form = RecipeForm()
-        formset = RecipeFormSet
+
         return render(
             request,
             'recipes/recipe_new.html',
-            {'form': form, 'is_edit': False, 'formset': formset},
+            {
+                'form': form,
+                'is_edit': False
+            },
         )
 
     form = RecipeForm(
         request.POST,
         files=request.FILES or None,
     )
-    formset = RecipeFormSet(
-        request.POST,
-    )
-    if form.is_valid():
-        new_recipe = form.save(commit=False)
-        new_recipe.author = request.user
-        new_recipe.pub_date = datetime.now()
-        formset = RecipeFormSet(
-            request.POST,
-            instance=new_recipe,
+
+    if not form.is_valid():
+        return render(
+            request,
+            'recipes/recipe_new.html',
+            {
+                'form': form,
+                'is_edit': False,
+            },
         )
-        if formset.is_valid():
-            new_recipe.save()
-            form.save_m2m()
-            formset.save()
-            return redirect('index')
-    return render(
-        request,
-        'recipes/recipe_new.html',
-        {'form': form, 'is_edit': False, 'formset': formset},
-    )
+
+    new_recipe = form.save(commit=False)
+    new_recipe.author = request.user
+    new_recipe.pub_date = datetime.now()
+    request_post = request.POST
+    new_recipe.save()
+    get_ingredients(new_recipe, request_post)
+    form.save_m2m()
+
+    return redirect('index')
 
 
-    # recipe = form.save(commit=False)
-    # recipe.author = request.user
-    # recipe.pub_date = datetime.now()
-    # recipe.save()
-    # form.save_m2m()
-    # return redirect('index')
+def get_ingredients(recipe_item, post_request):
+    ingredients_index = []
+
+    for key in post_request.keys():
+        if 'nameIngredient_' in str(key):
+            ingredients_index.append(key[15:])
+
+    for i in ingredients_index:
+        ingredient = get_object_or_404(Ingredient, title=post_request['nameIngredient_' + i])
+        quantity = post_request['valueIngredient_' + i]
+        recipe_item.ingredients.add(ingredient, through_defaults={'quantity': quantity})
 
 
 @login_required
 def recipe_edit(request, slug):
-    recipe = get_object_or_404(Recipe, slug=slug)
-    if not recipe.author == request.user:
+    edit_recipe = get_object_or_404(Recipe, slug=slug)
+    ingredient_list = IngredientRecipe.objects.filter(recipe=edit_recipe)
+    ingredients = render_ingredients_list(ingredient_list)
+    if not edit_recipe.author == request.user:
         return redirect('recipe', slug=slug)
     form = RecipeForm(
         request.POST or None,
         files=request.FILES or None,
-        instance=recipe,
+        instance=edit_recipe,
     )
-    formset = RecipeFormSet(
-        request.POST or None,
-        instance=recipe,
-    )
+
     if not request.method == 'POST':
-        # return render(
-        #     request,
-        #     'recipes/recipe_new.html',
-        #     {'recipe': recipe,
-        #      'form': form,
-        #      'is_edit': True
-        #      }
-        # )
         return render(
             request,
             'recipes/recipe_new.html',
-            {'recipe': recipe,
+            {'recipe': edit_recipe,
              'form': form,
              'is_edit': True,
-             'formset': formset
-             },
+             'ingredients': ingredients,
+             }
         )
 
-    if form.is_valid():
-        # form.save()
-        formset = RecipeFormSet(
-            request.POST,
-            instance=recipe,
+    if not form.is_valid():
+        return render(
+            request,
+            'recipes/recipe_new.html',
+            {'recipe': edit_recipe,
+             'form': form,
+             'is_edit': True,
+             }
         )
-        if formset.is_valid():
-            form.save()
-            formset.save()
-            return redirect('recipe', slug=form.cleaned_data.get("slug"))
-    return render(
-        request,
-        'recipes/recipe_new.html',
-        {'recipe': recipe,
-         'form': form,
-         'is_edit': True,
-         'formset': formset,
-         }
+
+    ingredient_list.delete()
+    request_post = request.POST
+    get_ingredients(edit_recipe, request_post)
+    form.save()
+
+    return redirect(
+        'recipe',
+        slug=form.cleaned_data.get("slug")
     )
 
-    # if form.is_valid():
-    #     new_recipe = form.save(commit=False)
-    #     new_recipe.author = request.user
-    #     new_recipe.pub_date = datetime.now()
-    #     formset = RecipeFormSet(
-    #         request.POST,
-    #         instance=new_recipe,
-    #     )
-    #     if formset.is_valid():
-    #         new_recipe.save()
-    #         form.save_m2m()
-    #         formset.save()
-    #         return redirect('index')
-    # return render(
-    #     request,
-    #     'recipes/recipe_new.html',
-    #     {'form': form, 'is_edit': False, 'formset': formset},
-    # )
+
+def render_ingredients_list(ingredient_list):
+    ingredients = {}
+    for i in range(len(ingredient_list)):
+        ingredients[str(i+1)] = [
+            ingredient_list[i].ingredient.title,
+            ingredient_list[i].quantity,
+            ingredient_list[i].ingredient.dimension
+        ]
+    return ingredients
 
 
 def list_download(request):

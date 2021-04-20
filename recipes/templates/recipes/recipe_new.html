@@ -12,8 +12,7 @@
 <div class="form-container">
     <form class="form" method="post" action="{% if is_edit %}{% url 'recipe_edit' recipe.slug %}{% else %}{% url 'recipe_new' %}{% endif %}" enctype="multipart/form-data">
         {% csrf_token %}
-        form {{ form.errors }}
-        formset {{ formset.errors }}
+        {{ form.errors }}
         <div class="form__group">
             <label for="{{ form.title.id_for_label }}" class="form__label">Название рецепта</label>
             <div class="form__field-group">
@@ -42,97 +41,30 @@
             </div>
         </div>
         <div class="form__group">
-            {{ formset.as_p }}
+            <label for="nameIngredient" class="form__label">Ингредиенты</label>
+            <div class="form__field-group">
+                <div class="form__field-group-ingredientes">
+                    <div class="form__dropdown">
+                        <input type="text" id="nameIngredient" name="ingredients" class="form__input">
+                        <div class="form__dropdown-items"></div>
+                    </div>
+                    <input type="number" id="cantidad" name="" class="form__input" min="0">
+                    <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
+                </div>
+                <div class="form__field-group-ingredientes-container">
+                    {% if is_edit %}{% for i, value in ingredients.items %}
+                        <div class="form__field-item-ingredient" id="ing_2">
+                            <span> {{ value.0 }} {{ value.1 }}{{ value.2 }}</span> <span class="form__field-item-delete"></span>
+                            <input id="nameIngredient_{{ i }}" name="nameIngredient_{{ i }}" type="hidden" value="{{ value.0 }}">
+                            <input id="valueIngredient_{{ i }}" name="valueIngredient_{{ i }}" type="hidden" value="{{ value.1 }}">
+                            <input id="unitsIngredient_{{ i }}" name="unitsIngredient_{{ i }}" type="hidden" value="{{ value.2 }}">`
+                        </div>
+                    {% endfor %}{% endif %}
+                </div>
+                <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
+                <span class="form__error"></span>
+            </div>
         </div>
-{#        <div class="form__group">#}
-{#            <input type="hidden" name="ingredientrecipe_set-TOTAL_FORMS" value="0" id="id_ingredientrecipe_set-TOTAL_FORMS">#}
-{#            <input type="hidden" name="ingredientrecipe_set-INITIAL_FORMS" value="0" id="id_ingredientrecipe_set-INITIAL_FORMS">#}
-{#            <input type="hidden" name="ingredientrecipe_set-MIN_NUM_FORMS" value="0" id="id_ingredientrecipe_set-MIN_NUM_FORMS">#}
-{#            <input type="hidden" name="ingredientrecipe_set-MAX_NUM_FORMS" value="1000" id="id_ingredientrecipe_set-MAX_NUM_FORMS">#}
-{#            <p>#}
-{#                <label for="id_ingredientrecipe_set-0-ingredient">Ingredient:</label>#}
-{#                <select name="ingredientrecipe_set-0-ingredient" id="id_ingredientrecipe_set-0-ingredient">#}
-{#                    <option value="">-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</option>#}
-{#                    <option value="1">абрикосовое варенье, г</option>#}
-{#                    <option value="2">ячневая крупа, г</option>#}
-{#                </select>#}
-{#            </p>#}
-{#            <p>#}
-{#                <label for="id_ingredientrecipe_set-9-quantity">Quantity:</label>#}
-{#                <input type="number" name="ingredientrecipe_set-9-quantity" value="4578" id="id_ingredientrecipe_set-9-quantity">#}
-{#            </p>#}
-{#            <p>#}
-{#                <label for="id_ingredientrecipe_set-9-DELETE">Удалить:</label>#}
-{#                <input type="checkbox" name="ingredientrecipe_set-9-DELETE" id="id_ingredientrecipe_set-9-DELETE">#}
-{#                <input type="hidden" name="ingredientrecipe_set-9-id" value="14" id="id_ingredientrecipe_set-9-id">#}
-{#                <input type="hidden" name="ingredientrecipe_set-9-recipe" value="1" id="id_ingredientrecipe_set-9-recipe">#}
-{#            </p>#}
-{#            <p>#}
-{#                <label for="id_ingredientrecipe_set-10-ingredient">Ingredient:</label>#}
-{#                <select name="ingredientrecipe_set-10-ingredient" id="id_ingredientrecipe_set-10-ingredient">#}
-{#                    <option value="" selected>-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</option>#}
-{#                    <option value="2191">ячневая крупа, г</option>#}
-{#                </select>#}
-{#            </p>#}
-{#            <p>#}
-{#                <label for="id_ingredientrecipe_set-10-quantity">Quantity:</label>#}
-{#                <input type="number" name="ingredientrecipe_set-10-quantity" id="id_ingredientrecipe_set-10-quantity">#}
-{#            </p>#}
-{#            <p>#}
-{#                <label for="id_ingredientrecipe_set-10-DELETE">Удалить:</label>#}
-{#                <input type="checkbox" name="ingredientrecipe_set-10-DELETE" id="id_ingredientrecipe_set-10-DELETE">#}
-{#                <input type="hidden" name="ingredientrecipe_set-10-id" id="id_ingredientrecipe_set-10-id">#}
-{#                <input type="hidden" name="ingredientrecipe_set-10-recipe" value="1" id="id_ingredientrecipe_set-10-recipe">#}
-{#            </p>#}
-{#        </div>#}
-{#        !!! здесь начинается симбиоз !!!#}
-{#        <div class="form__group">#}
-{#            <input type="hidden" name="ingredientrecipe_set-TOTAL_FORMS" value="1" id="id_ingredientrecipe_set-TOTAL_FORMS">#}
-{#            <input type="hidden" name="ingredientrecipe_set-INITIAL_FORMS" value="1" id="id_ingredientrecipe_set-INITIAL_FORMS">#}
-{#            <input type="hidden" name="ingredientrecipe_set-MIN_NUM_FORMS" value="0" id="id_ingredientrecipe_set-MIN_NUM_FORMS">#}
-{#            <input type="hidden" name="ingredientrecipe_set-MAX_NUM_FORMS" value="1000" id="id_ingredientrecipe_set-MAX_NUM_FORMS">#}
-{#            <label for="nameIngredient" class="form__label">Ингредиенты</label>#}
-{#            <div class="form__field-group">#}
-{#                <div class="form__field-group-ingredientes">#}
-{#                    <div class="form__dropdown">#}
-{#                        <input type="text" id="nameIngredient" name="ingredientrecipe_set-0-ingredient" class="form__input">#}
-{#                        <div class="form__dropdown-items"></div>#}
-{#                    </div>#}
-{#                    <input type="number" id="cantidad" name="ingredientrecipe_set-0-quantity" class="form__input" min="0">#}
-{#                    <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>#}
-{#                </div>#}
-{#                <div class="form__field-group-ingredientes-container">#}
-{##}
-{#                </div>#}
-{#                <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>#}
-{#                <span class="form__error"></span>#}
-{#            </div>#}
-{#        </div>#}
-{#        !!! здесь начинвется красивая часть !!!#}
-{#        <div class="form__group">#}
-{#            <label for="nameIngredient" class="form__label">Ингредиенты</label>#}
-{#            <div class="form__field-group">#}
-{#                <div class="form__field-group-ingredientes">#}
-{#                    <div class="form__dropdown">#}
-{#                        <input type="text" id="nameIngredient" name="ingredients" class="form__input">#}
-{#                        <div class="form__dropdown-items"></div>#}
-{#                    </div>#}
-{#                    <input type="number" id="cantidad" name="" class="form__input" min="0">#}
-{#                    <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>#}
-{#                </div>#}
-{#                <div class="form__field-group-ingredientes-container">#}
-{#                    <div class="form__field-item-ingredient" id="ing_2">#}
-{#                        <span> Картошка 5шт.</span>#}
-{#                        <span class="form__field-item-delete"></span>#}
-{#                        <input id="nameIngredient_2" name="nameIngredient_2" type="hidden" value="ingredient.title">#}
-{#                        <input id="valueIngredient_2" name="valueIngredient_2" type="hidden" value="ingredient.quantity">#}
-{#                        <input id="unitsIngredient_2" name="unitsIngredient_2" type="hidden" value="ingredient.dimensions">#}
-{#                    </div>#}
-{#                </div>#}
-{#                <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>#}
-{#                <span class="form__error"></span>#}
-{#            </div>#}
-{#        </div>#}
         <div class="form__group">
             <label for="id_time" class="form__label">Время приготовления</label>
             <div class="form__field-group form__field-group_time">
