@@ -9,11 +9,11 @@
         <a class="card__title link" href="{% url 'recipe' recipe.slug %}" target="_blank">{{ recipe.title }}</a>
         <ul class="card__items">
         {% for tag in recipe.tags.all %}
-            {% if tag.title == 'Завтрак'%}
+            {% if tag.title == 'breakfast'%}
             <li class="card__item"><span class="badge badge_style_orange">Завтрак</span></li>
-            {% elif tag.title == 'Обед'%}
+            {% elif tag.title == 'lunch'%}
             <li class="card__item"><span class="badge badge_style_green">Обед</span></li>
-            {% elif tag.title == 'Ужин'%}
+            {% elif tag.title == 'dinner'%}
             <li class="card__item"><span class="badge badge_style_purple">Ужин</span></li>
             {% endif %}
         {% endfor %}

@@ -8,14 +8,19 @@ User = get_user_model()
 
 class Ingredient(models.Model):
     title = models.CharField(
+        'Название ингредиента',
         max_length=256,
-        verbose_name="Название",
     )
     dimension = models.CharField(
+        'ед. изм.',
         max_length=64,
         blank=True,
-        verbose_name="ед. изм.",
     )
+
+    class Meta:
+        ordering =('title', )
+        verbose_name = 'ингредиент'
+        verbose_name_plural = 'ингредиенты'
 
     def __str__(self):
         return '{}, {}'.format(self.title, self.dimension)
@@ -24,7 +29,15 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     title = models.CharField(
         max_length=50,
+        verbose_name="Title",
+    )
+    display_name = models.CharField(
+        max_length=50,
         verbose_name="Название",
+    )
+    color = models.CharField(
+        max_length=50,
+        verbose_name="Цвет",
     )
 
     def __str__(self):
