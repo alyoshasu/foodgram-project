@@ -1,4 +1,5 @@
-<div class="card" data-id="120">
+{% load static %}
+<div class="card" data-id={{ recipe.id }}>
     <a href="{% url 'recipe' recipe.slug %}" class="link" target="_blank">
         {% load thumbnail %}
         {% thumbnail recipe.image "480x480" upscale=True as im %}

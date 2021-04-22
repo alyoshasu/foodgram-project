@@ -2,11 +2,13 @@ class Api {
   constructor() {
     this.apiUrl = '/api/v1';
     this.headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
     };
   }
 
   fetch(url, method, body) {
+    console.log(this.headers)
     console.time(`Request ${method || 'GET'} => ${url}`)
     return fetch(`${this.apiUrl}${url}`, {
       headers: this.headers,
@@ -45,14 +47,14 @@ class Api {
   }
 
   addFavorites(id) {
-    return this.fetch(`${this.apiUrl}/favorites`, 'POST', JSON.stringify({
+    return this.fetch(`/favorites/`, 'POST', JSON.stringify({
       id: id
     }))
 
   }
 
   removeFavorites(id) {
-    return this.fetch(`${this.apiUrl}/favorites/${id}`, 'DELETE')
+    return this.fetch(`/favorites/${id}`, 'DELETE')
   }
 
   getIngredients(text) {

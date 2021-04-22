@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 
@@ -108,3 +107,5 @@ class IngredientRecipe(models.Model):
 
     class Meta:
         unique_together = ['recipe', 'ingredient']
+
+

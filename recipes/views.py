@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 
 from recipes.models import Recipe, IngredientRecipe, Ingredient
@@ -35,7 +36,7 @@ def profile(request, username):
     paginator = Paginator(user_recipes, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    following = following_check(request.user, username)
+    # following = following_check(request.user, username)
     return render(
         request,
         'index.html',
@@ -43,22 +44,39 @@ def profile(request, username):
             'author': user,
             'page': page,
             'paginator': paginator,
-            'following': following,
+            # 'following': following,
         },
     )
 
 
-def following_check(user, author_username):
-    if not user.is_authenticated:
-        return False
-    try:
-        following = Follow.objects.get(
-            author__username=author_username,
-            user=user,
-        )
-    except Follow.DoesNotExist:
-        following = False
-    return following
+# def following_check(user, author_username):
+#     if not user.is_authenticated:
+#         return False
+#     try:
+#         following = Follow.objects.get(
+#             author__username=author_username,
+#             user=user,
+#         )
+#     except Follow.DoesNotExist:
+#         following = False
+#     return following
+
+
+@login_required
+def favorite(request):
+    favorite_list = Recipe.objects.filter(liked__user=request.user)
+    paginator = Paginator(favorite_list, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    return render(
+        request,
+        'index.html',
+        {
+            'page': page,
+            'paginator': paginator
+        },
+    )
 
 
 def recipe(request, slug):
@@ -121,15 +139,19 @@ def recipe_new(request):
             },
         )
 
-    new_recipe = form.save(commit=False)
-    new_recipe.author = request.user
-    new_recipe.pub_date = datetime.now()
-    request_post = request.POST
-    new_recipe.save()
-    get_ingredients(new_recipe, request_post)
-    form.save_m2m()
+    with transaction.atomic():
+        new_recipe = form.save(commit=False)
+        new_recipe.author = request.user
+        new_recipe.pub_date = datetime.now()
+        request_post = request.POST
+        new_recipe.save()
+        get_ingredients(new_recipe, request_post)
+        form.save_m2m()
 
-    return redirect('index')
+    return redirect(
+        'recipe',
+        slug=form.cleaned_data.get("slug")
+    )
 
 
 def get_ingredients(recipe_item, post_request):
@@ -179,10 +201,11 @@ def recipe_edit(request, slug):
              }
         )
 
-    ingredient_list.delete()
-    request_post = request.POST
-    get_ingredients(edit_recipe, request_post)
-    form.save()
+    with transaction.atomic():
+        ingredient_list.delete()
+        request_post = request.POST
+        get_ingredients(edit_recipe, request_post)
+        form.save()
 
     return redirect(
         'recipe',
@@ -203,3 +226,7 @@ def render_ingredients_list(ingredient_list):
 
 def list_download(request):
     pass
+
+
+def purchase(request):
+    return None

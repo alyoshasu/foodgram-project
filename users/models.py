@@ -25,7 +25,7 @@ class Follow(models.Model):
 		unique_together = ['user', 'author']
 
 
-class Purchase_quantity(models.Model):
+class PurchaseQuantity(models.Model):
 	user = models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
@@ -47,13 +47,13 @@ class Favorite(models.Model):
 	user = models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
-		related_name='follows',
+		related_name='likes',
 		verbose_name="Пользователь",
 	)
 	recipe = models.ForeignKey(
 		Recipe,
 		on_delete=models.CASCADE,
-		related_name="followed",
+		related_name="liked",
 		verbose_name="Рецепт",
 	)
 
