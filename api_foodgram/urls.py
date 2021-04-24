@@ -5,7 +5,7 @@ from .views import (IngredientViewSet, RecipeViewSet, FollowViewSet, FavoritesVi
 
 from rest_framework.authtoken import views
 
-v1_router = DefaultRouter()
+v1_router = DefaultRouter(trailing_slash=False)
 v1_router.register(r'ingredients', IngredientViewSet, basename='IngredientView')
 v1_router.register(r'recipes', RecipeViewSet, basename='RecipeView')
 v1_router.register(r'follow', FollowViewSet, basename='FollowView')

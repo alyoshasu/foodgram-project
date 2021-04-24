@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from recipes.models import Ingredient, Tag, Recipe, IngredientRecipe
 from users.models import Follow, PurchaseQuantity, Favorite
@@ -43,6 +44,11 @@ class Purchase_quantitySerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+	user = serializers.SlugRelatedField(
+		slug_field='id',
+		read_only=True,
+	)
+
 	class Meta:
 		fields = '__all__'
 		model = Favorite

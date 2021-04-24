@@ -1,63 +1,133 @@
+
 class Api {
-  constructor() {
-    this.apiUrl = '/api/v1';
-    this.headers = {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
-    };
-  }
-
-  fetch(url, method, body) {
-    console.log(this.headers)
-    console.time(`Request ${method || 'GET'} => ${url}`)
-    return fetch(`${this.apiUrl}${url}`, {
-      headers: this.headers,
-      method: method || 'GET',
-      body: body || undefined
-    }).then(e => {
-      if (e.ok) {
-        return e.json()
+    constructor(apiUrl) {
+        this.apiUrl =  apiUrl;
+    }
+  getPurchases () {
+    return fetch(`${this.apiUrl}/purchases`, {
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
       }
-      return Promise.reject(e.statusText)
-    }).finally(() => console.timeEnd(`Request ${method || 'GET'} => ${url}`))
+    })
+      .then( e => {
+          if(e.ok) {
+              return e.json()
+          }
+          return Promise.reject(e.statusText)
+      })
   }
-
-  getPurchases() {
-    return this.fetch('/purchases')
+  addPurchases (id) {
+    return fetch(`${this.apiUrl}/purchases`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      },
+      body: JSON.stringify({
+        id: id
+      })
+    })
+      .then( e => {
+          if(e.ok) {
+              return e.json()
+          }
+          return Promise.reject(e.statusText)
+      })
   }
-
-  addPurchases(id) {
-    return this.fetch(`${this.apiUrl}/purchases`, 'POST', JSON.stringify({
-      id: id
-    }))
+  removePurchases (id){
+    return fetch(`${this.apiUrl}/purchases/${id}`, {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      }
+    })
+      .then( e => {
+          if(e.ok) {
+              return e.json()
+          }
+          return Promise.reject(e.statusText)
+      })
   }
-
-  removePurchases(id) {
-    return this.fetch(`${this.apiUrl}/purchases/${id}`, 'DELETE')
-  }
-
   addSubscriptions(id) {
-    return this.fetch(`${this.apiUrl}/subscriptions`, 'POST', JSON.stringify({
-      id: id
-    }))
+    return fetch(`${this.apiUrl}/subscriptions`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      },
+      body: JSON.stringify({
+        id: id
+      })
+    })
+      .then( e => {
+          if(e.ok) {
+              return e.json()
+          }
+          return Promise.reject(e.statusText)
+      })
   }
-
-  removeSubscriptions(id) {
-    return this.fetch(`${this.apiUrl}/subscriptions/${id}`, 'DELETE')
+  removeSubscriptions (id) {
+    return fetch(`${this.apiUrl}/subscriptions/${id}`, {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      }
+    })
+      .then( e => {
+          if(e.ok) {
+              return e.json()
+          }
+          return Promise.reject(e.statusText)
+      })
   }
-
-  addFavorites(id) {
-    return this.fetch(`/favorites/`, 'POST', JSON.stringify({
-      id: id
-    }))
-
+  addFavorites (id, user)  {
+    return fetch(`${this.apiUrl}/favorites`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      },
+      body: JSON.stringify({
+          recipe: id
+      })
+    })
+        .then( e => {
+            if(e.ok) {
+                return e.json()
+            }
+            return Promise.reject(e.statusText)
+        })
   }
-
-  removeFavorites(id) {
-    return this.fetch(`/favorites/${id}`, 'DELETE')
+  removeFavorites (id) {
+    return fetch(`${this.apiUrl}/favorites/${id}`, {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+      }
+    })
+        .then( e => {
+            if(e.ok) {
+                return e.json()
+            }
+            return Promise.reject(e.statusText)
+        })
   }
-
-  getIngredients(text) {
-    return this.fetch(`/ingredients?search=${text}`)
-  }
+    getIngredients  (text)  {
+        return fetch(`${this.apiUrl}/ingredients?query=${text}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+            }
+        })
+            .then( e => {
+                if(e.ok) {
+                    return e.json()
+                }
+                return Promise.reject(e.statusText)
+            })
+    }
 }
