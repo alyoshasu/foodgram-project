@@ -44,13 +44,11 @@ class Purchase_quantitySerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-	user = serializers.SlugRelatedField(
-		slug_field='id',
-		read_only=True,
-	)
+	recipe = serializers.PrimaryKeyRelatedField(read_only=True)
+	user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=serializers.CurrentUserDefault())
 
 	class Meta:
-		fields = '__all__'
+		fields = ['user', 'recipe']
 		model = Favorite
 
 

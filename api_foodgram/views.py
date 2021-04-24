@@ -31,17 +31,11 @@ class FavoritesViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    # def create(self, request, *args, **kwargs):
-    #     user = self.request.user.id
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-    #     headers = self.get_success_headers(serializer.data)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    lookup_field = 'recipe_id'
 
     def perform_create(self, serializer):
-        user = self.request.user
-        recipe_id = self.request.data['recipe']
+        recipe_id = self.request.data['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        serializer.save(user=user, recipe=recipe)
+        serializer.save(recipe=recipe)
+
+

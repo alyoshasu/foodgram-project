@@ -83,7 +83,7 @@ class Api {
           return Promise.reject(e.statusText)
       })
   }
-  addFavorites (id, user)  {
+  addFavorites (id)  {
     return fetch(`${this.apiUrl}/favorites`, {
       method: 'POST',
       headers: {
@@ -91,7 +91,7 @@ class Api {
           'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
       },
       body: JSON.stringify({
-          recipe: id
+          id: id
       })
     })
         .then( e => {
