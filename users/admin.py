@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Follow, PurchaseQuantity, Favorite
+from .models import Subscription, PurchaseQuantity, Favorite
 
-admin.site.register(Follow)
+admin.site.register(Subscription)
 admin.site.register(PurchaseQuantity)
 admin.site.register(Favorite)

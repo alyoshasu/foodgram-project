@@ -7,7 +7,7 @@ from recipes.models import Ingredient, Recipe
 User = get_user_model()
 
 
-class Follow(models.Model):
+class Subscription(models.Model):
 	user = models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,

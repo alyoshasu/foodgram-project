@@ -109,11 +109,10 @@ class Api {
           'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
       }
     })
-        .then( e => {
-            if(e.ok) {
-                return e.json()
+        .then( response => {
+            if(!response.ok) {
+                return Promise.reject(response.statusText)
             }
-            return Promise.reject(e.statusText)
         })
   }
     getIngredients  (text)  {

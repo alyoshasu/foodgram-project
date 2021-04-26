@@ -1,3 +1,4 @@
+
 class Subscribe {
     constructor(config, api) {
         this.config = config;

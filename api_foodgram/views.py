@@ -4,9 +4,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import generics, viewsets, filters, permissions
 from recipes.models import Ingredient, Tag, Recipe, IngredientRecipe
-from users.models import Follow, PurchaseQuantity, Favorite
+from users.models import Subscription, PurchaseQuantity, Favorite
 from .serializers import IngredientSerializer, TagSerializer, RecipeSerializer, IngredientRecipeSerializer, \
-    FollowSerializer, Purchase_quantitySerializer, FavoriteSerializer
+    SubscriptionSerializer, Purchase_quantitySerializer, FavoriteSerializer
 User = get_user_model()
 
 
@@ -22,9 +22,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
 
 
-class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
-    serializer_class = FollowSerializer
+class SubscriptionViewSet(viewsets.ModelViewSet):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    lookup_field = 'author_id'
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"deleted": "ok"}, status=status.HTTP_200_OK)
+
+    def perform_create(self, serializer):
+        author_id = self.request.data['id']
+        author = get_object_or_404(User, id=author_id)
+        serializer.save(author=author)
 
 
 class FavoritesViewSet(viewsets.ModelViewSet):
@@ -37,5 +49,3 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         recipe_id = self.request.data['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
         serializer.save(recipe=recipe)
-
-

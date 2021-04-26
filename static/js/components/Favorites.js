@@ -1,3 +1,4 @@
+
 class Favorites {
     constructor(config, api) {
         this.config = config;
@@ -19,7 +20,7 @@ class Favorites {
     removeFavorites (target,cardId,callBack) {
         target.setAttribute('disabled', true)
         this.api.removeFavorites(cardId)
-            .then( e => {
+            .then( (response) => {
                 target.innerHTML = this.config.default.text;
                 target.setAttribute(this.config.attr, true);
                 callBack&&callBack()

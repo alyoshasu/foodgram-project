@@ -8,7 +8,7 @@ from recipes.models import Recipe, IngredientRecipe, Ingredient
 
 from datetime import datetime
 
-from users.models import Follow
+from users.models import Subscription
 from .forms import RecipeForm
 
 User = get_user_model()
