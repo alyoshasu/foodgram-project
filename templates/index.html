@@ -1,7 +1,7 @@
 {% extends "includes_main/base.html" %}
 {% load static %}
 {% block head %}
-<title> Рецепты </title>
+<title> {% if request.resolver_match.url_name == 'profile' %} Профиль {{ author.get_full_name }} {% elif request.resolver_match.url_name == 'favorite' %} Избранное {% else %} Рецепты {% endif %} </title>
 <link rel="stylesheet" href="{% static 'pages/index.css' %}">
 {% endblock %}
 
@@ -27,7 +27,12 @@
     {% if request.resolver_match.url_name == 'favorite' %}
         <script src="{% static 'js/components/Favorites.js' %}"></script>
         <script src="{% static 'favorite/favorite.js' %}"></script>
-    {% else %}
+    {% elif request.resolver_match.url_name == 'profile' %}
+        <script src="{% static 'js/components/Favorites.js' %}"></script>
+        <script src="{% static 'js/components/Subscribe.js' %}"></script>
+        <script src="{% static 'js/components/AuthorRecipe.js' %}"></script>
+        <script src="{% static 'author/authorRecipe.js' %}"></script>
+    {% elif request.resolver_match.url_name == 'index' %}
         {% if user.is_authenticated %}
             <script src="{% static 'js/components/Favorites.js' %}"></script>
             <script src="{% static 'index/indexAuth.js' %}"></script>

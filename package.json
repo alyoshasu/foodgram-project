@@ -2,7 +2,7 @@
   "name": "foodgram-project",
   "version": "1.0.0",
   "description": "foodgram-project",
-  "main": "authorRecipe.js",
+  "main": "recipes/static/author/authorRecipe.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

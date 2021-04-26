@@ -16,7 +16,7 @@ User = get_user_model()
 
 def index(request):
     recipe_list = Recipe.objects.all()
-    paginator = Paginator(recipe_list, 10)
+    paginator = Paginator(recipe_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -33,7 +33,7 @@ def index(request):
 def profile(request, username):
     user = get_object_or_404(User, username=username)
     user_recipes = user.recipes.all()
-    paginator = Paginator(user_recipes, 10)
+    paginator = Paginator(user_recipes, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     # following = following_check(request.user, username)
@@ -44,7 +44,6 @@ def profile(request, username):
             'author': user,
             'page': page,
             'paginator': paginator,
-            # 'following': following,
         },
     )
 
@@ -65,7 +64,7 @@ def profile(request, username):
 @login_required
 def favorite(request):
     favorite_list = Recipe.objects.filter(liked__user=request.user)
-    paginator = Paginator(favorite_list, 10)
+    paginator = Paginator(favorite_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -74,7 +73,8 @@ def favorite(request):
         'index.html',
         {
             'page': page,
-            'paginator': paginator
+            'paginator': paginator,
+            'favorites': True,
         },
     )
 
@@ -96,7 +96,7 @@ def recipe(request, slug):
 @login_required
 def follow(request):
     follow_list = User.objects.filter(following__user=request.user)
-    paginator = Paginator(follow_list, 10)
+    paginator = Paginator(follow_list, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -230,3 +230,16 @@ def list_download(request):
 
 def purchase(request):
     return None
+
+
+def recipe_delete(request, slug):
+    recipe_item = get_object_or_404(Recipe, slug=slug)
+    if not request.user == recipe_item.author:
+        return redirect(
+            'recipe',
+            slug=slug
+        )
+    recipe_item.delete()
+    return redirect(
+        'index',
+    )
