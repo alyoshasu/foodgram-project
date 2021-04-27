@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
     'sorl.thumbnail',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

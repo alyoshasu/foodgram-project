@@ -7,6 +7,15 @@
 
 {% block content %}
     {% include 'includes_main/menu.html' %}
+
+{#    <form method="get">#}
+{#        {{ filter.form.as_p }}#}
+{#        <input type="submit" />#}
+{#    </form>#}
+{#    {% for obj in filter.qs %}#}
+{#        {{ obj.title }} <br />#}
+{#    {% endfor %}#}
+
     <div class="card-list">
     {% for recipe in page %}
         {% include 'recipes/includes_recipes/recipe_item.html' %}

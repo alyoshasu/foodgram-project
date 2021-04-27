@@ -1,17 +1,30 @@
+{% load recipe_tags %}
 {% load user_filters %}
 <div class="main__header">
     <h1 class="main__title"> {% if request.resolver_match.url_name == 'profile' %} Профиль {{ author.get_full_name }} {% elif request.resolver_match.url_name == 'favorite' %} Избранное {% else %} Рецепты {% endif %} </h1>
     <ul class="tags">
         <li class="tags__item">
-            <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="#"></a>
+            {% if request.GET.urlencode|tag_chosen:1 %}
+                <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange tags__checkbox_active" href="{% add_tag 1 'tags' request.GET.urlencode False %}"></a>
+            {% else %}
+                <a id="breakfast" class="tags__checkbox tags__checkbox_style_orange" href="{% add_tag 1 'tags' request.GET.urlencode %}"></a>
+            {% endif %}
             <span class="tags__label">Завтрак</span>
         </li>
         <li class="tags__item">
-            <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="#"></a>
+            {% if request.GET.urlencode|tag_chosen:2 %}
+                <a id="lunch" class="tags__checkbox tags__checkbox_style_green tags__checkbox_active" href="{% add_tag 2 'tags' request.GET.urlencode False %}"></a>
+            {% else %}
+                <a id="lunch" class="tags__checkbox tags__checkbox_style_green" href="{% add_tag 2 'tags' request.GET.urlencode %}"></a>
+            {% endif %}
             <span for="lunch" class="tags__label">Обед</span>
         </li>
         <li class="tags__item">
-            <a id="dinner" class="tags__checkbox tags__checkbox_style_purple tags__checkbox_active" href="#"></a>
+            {% if request.GET.urlencode|tag_chosen:3 %}
+                <a id="dinner" class="tags__checkbox tags__checkbox_style_purple tags__checkbox_active" href="{% add_tag 3 'tags' request.GET.urlencode False %}"></a>
+            {% else %}
+                <a id="dinner" class="tags__checkbox tags__checkbox_style_purple" href="{% add_tag 3 'tags' request.GET.urlencode %}"></a>
+            {% endif %}
             <label for="dinner" class="tags__label">Ужин</label>
         </li>
     </ul>

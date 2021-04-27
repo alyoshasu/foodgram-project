@@ -8,7 +8,7 @@ from recipes.models import Recipe, IngredientRecipe, Ingredient
 
 from datetime import datetime
 
-from users.models import Subscription
+from .filters import RecipeFilter
 from .forms import RecipeForm
 
 User = get_user_model()
@@ -16,7 +16,12 @@ User = get_user_model()
 
 def index(request):
     recipe_list = Recipe.objects.all()
-    paginator = Paginator(recipe_list, 6)
+    filtered_recipes = RecipeFilter(
+        request.GET,
+        queryset=recipe_list,
+    )
+
+    paginator = Paginator(filtered_recipes.qs, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -25,7 +30,7 @@ def index(request):
         "index.html",
         {
             'page': page,
-            'paginator': paginator
+            'paginator': paginator,
         },
     )
 
@@ -33,10 +38,15 @@ def index(request):
 def profile(request, username):
     user = get_object_or_404(User, username=username)
     user_recipes = user.recipes.all()
-    paginator = Paginator(user_recipes, 6)
+    filtered_recipes = RecipeFilter(
+        request.GET,
+        queryset=user_recipes,
+    )
+
+    paginator = Paginator(filtered_recipes.qs, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    # following = following_check(request.user, username)
+
     return render(
         request,
         'index.html',
@@ -48,23 +58,15 @@ def profile(request, username):
     )
 
 
-# def following_check(user, author_username):
-#     if not user.is_authenticated:
-#         return False
-#     try:
-#         following = Follow.objects.get(
-#             author__username=author_username,
-#             user=user,
-#         )
-#     except Follow.DoesNotExist:
-#         following = False
-#     return following
-
-
 @login_required
 def favorite(request):
     favorite_list = Recipe.objects.filter(liked__user=request.user)
-    paginator = Paginator(favorite_list, 6)
+    filtered_recipes = RecipeFilter(
+        request.GET,
+        queryset=favorite_list,
+    )
+
+    paginator = Paginator(filtered_recipes.qs, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
