@@ -4,9 +4,10 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import generics, viewsets, filters, permissions
 from recipes.models import Ingredient, Tag, Recipe, IngredientRecipe
-from users.models import Subscription, PurchaseQuantity, Favorite
+from users.models import Subscription, PurchaseList, Favorite
 from .serializers import IngredientSerializer, TagSerializer, RecipeSerializer, IngredientRecipeSerializer, \
-    SubscriptionSerializer, Purchase_quantitySerializer, FavoriteSerializer
+    SubscriptionSerializer, Purchase_quantitySerializer, FavoriteSerializer, PurchaseSerializer
+
 User = get_user_model()
 
 
@@ -49,3 +50,8 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         recipe_id = self.request.data['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
         serializer.save(recipe=recipe)
+
+
+class PurchasesViewSet(viewsets.ModelViewSet):
+    queryset = PurchaseList.objects.all()
+    serializer_class = PurchaseSerializer

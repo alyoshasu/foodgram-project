@@ -25,22 +25,22 @@ class Subscription(models.Model):
 		unique_together = ['user', 'author']
 
 
-class PurchaseQuantity(models.Model):
+class PurchaseList(models.Model):
 	user = models.ForeignKey(
 		User,
 		on_delete=models.CASCADE,
 		related_name='purchases',
 		verbose_name="Список покупок",
 	)
-	ingredient = models.ForeignKey(
-		Ingredient,
-		on_delete=models.CASCADE,
-		related_name='in_purchase',
+
+	recipes = models.ManyToManyField(
+		Recipe,
+		verbose_name="Рецепты",
+		related_name='in_purchase_list',
 	)
-	quantity = models.IntegerField()
 
 	class Meta:
-		unique_together = ['user', 'ingredient']
+		pass
 
 
 class Favorite(models.Model):

@@ -231,7 +231,25 @@ def list_download(request):
 
 
 def purchase(request):
-    return None
+    user = request.user
+    recipes = Recipe.objects.filter(in_purchase_list__user=user)
+    print(recipes)
+    return render(
+        request,
+        'purchase/purchase.html',
+        {'recipes': recipes},
+    )
+
+
+# def purchase(request):
+#     user = request.user
+#     recipes = Recipe.objects.filter(in_purchase_list__user=user)
+#     print(recipes)
+#     return render(
+#         request,
+#         'purchase/purchase.html',
+#         {'recipes': recipes},
+#     )
 
 
 def recipe_delete(request, slug):
