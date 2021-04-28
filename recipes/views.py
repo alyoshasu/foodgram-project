@@ -4,12 +4,20 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
+
 from recipes.models import Recipe, IngredientRecipe, Ingredient
 
 from datetime import datetime
 
+from users.models import Purchase
 from .filters import RecipeFilter
 from .forms import RecipeForm
+
+import io
+from django.http import FileResponse
 
 User = get_user_model()
 
@@ -226,32 +234,65 @@ def render_ingredients_list(ingredient_list):
     return ingredients
 
 
+@login_required
 def list_download(request):
-    pass
+    output_dict = generate_dict(request.user)
+    pdfmetrics.registerFont(TTFont('DejaVuSerif', './DejaVuSerif.ttf'))
+
+    # Create a file-like buffer to receive PDF data.
+    buffer = io.BytesIO()
+
+    # Create the PDF object, using the buffer as its "file."
+    p = canvas.Canvas(buffer)
+    p.setFont("DejaVuSerif", 15)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    start = 800
+    for key in output_dict.keys():
+        ingredient_line = r'{} - {}, {};'.format(key, output_dict[key][0], output_dict[key][1])
+        p.drawString(50, start, ingredient_line)
+        start -= 20
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='purchase_list.pdf')
 
 
+def generate_dict(user):
+    ingredients_quantity = {}
+    for purchase_item in user.purchases.all():
+        recipe_item = purchase_item.recipe
+        for ingredient_item in recipe_item.ingredients.all():
+            quantity = IngredientRecipe.objects.get(
+                    recipe=recipe_item,
+                    ingredient=ingredient_item
+                ).quantity
+            if ingredient_item.title in ingredients_quantity.keys():
+                ingredients_quantity[ingredient_item.title][0] += quantity
+            else:
+                ingredients_quantity[ingredient_item.title] = [quantity, ingredient_item.dimension]
+
+    return ingredients_quantity
+
+
+@login_required
 def purchase(request):
     user = request.user
-    recipes = Recipe.objects.filter(in_purchase_list__user=user)
-    print(recipes)
+    purchases = Purchase.objects.filter(user=user)
     return render(
         request,
         'purchase/purchase.html',
-        {'recipes': recipes},
+        {'purchases': purchases},
     )
 
 
-# def purchase(request):
-#     user = request.user
-#     recipes = Recipe.objects.filter(in_purchase_list__user=user)
-#     print(recipes)
-#     return render(
-#         request,
-#         'purchase/purchase.html',
-#         {'recipes': recipes},
-#     )
-
-
+@login_required
 def recipe_delete(request, slug):
     recipe_item = get_object_or_404(Recipe, slug=slug)
     if not request.user == recipe_item.author:

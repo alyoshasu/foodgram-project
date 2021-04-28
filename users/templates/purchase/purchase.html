@@ -11,21 +11,23 @@
     </div>
     <div class="card-list card-list_column">
         <ul class="shopping-list">
-            {% for recipe in recipes %}
-            <li class="shopping-list__item" data-id="{{ recipe.id }}">
+{#            {% for recipe in recipes %}#}
+        {% for purchase in purchases %}
+            <li class="shopping-list__item" data-id="{{ purchase.recipe.id }}">
                 <div class="recipe recipe_reverse">
                     {% load thumbnail %}
-                    {% thumbnail recipe.image "480x480" upscale=True as im %}
+                    {% thumbnail purchase.recipe.image "480x480" upscale=True as im %}
                         <img src="{{ im.url  }}" alt="какой-то текст" class="recipe__image recipe__image_big">
                     {% endthumbnail %}
-                    <h3 class="recipe__title"> {{ recipe.title }} </h3>
-                    <p class="recipe__text"><span class="icon-time"></span> {{ recipe.time }} </p>
+                    <h3 class="recipe__title"> {{ purchase.recipe.title }} </h3>
+                    <p class="recipe__text"><span class="icon-time"></span> {{ purchase.recipe.time }} </p>
                 </div>
-                <a href="{% url request.resolver_match.url_name %}" class="shopping-list__button link">Удалить</a>
+{#                <a href="{% url request.resolver_match.url_name %}" class="shopping-list__button link" >Удалить</a>#}
+                <button class="shopping-list__button link" onClick="setTimeout('history.go(0); window.location.reload();',500);">Удалить</button>
             </li>
             {% endfor %}
         </ul>
-        <a href="#"><button class="button button_style_blue">Скачать список</button></a>
+        <a href="{% url 'purchase_list' %}"><button class="button button_style_blue">Скачать список</button></a>
     </div>
 {% endblock %}
 

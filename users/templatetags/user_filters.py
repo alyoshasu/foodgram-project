@@ -1,6 +1,6 @@
 from django import template
 
-from users.models import Favorite, Subscription
+from users.models import Favorite, Subscription, Purchase
 
 register = template.Library()
 
@@ -19,6 +19,13 @@ def is_favorite(recipe, user):
     if not Favorite.objects.filter(recipe=recipe, user=user):
         return False
     return Favorite.objects.get(recipe=recipe, user=user).id
+
+
+@register.filter
+def is_purchase(recipe, user):
+    if not Purchase.objects.filter(recipe=recipe, user=user):
+        return False
+    return Purchase.objects.get(recipe=recipe, user=user).id
 
 
 @register.filter

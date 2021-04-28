@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from recipes.models import Ingredient, Tag, Recipe, IngredientRecipe
-from users.models import Subscription, PurchaseList, Favorite
+from users.models import Subscription, Purchase, Favorite
 User = get_user_model()
 
 
@@ -34,7 +34,7 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
 class Purchase_quantitySerializer(serializers.ModelSerializer):
 	class Meta:
 		fields = '__all__'
-		model = PurchaseList
+		model = Purchase
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -76,6 +76,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
+	recipe = serializers.SlugRelatedField(
+		read_only=True,
+		slug_field='title',
+	)
+	user = serializers.SlugRelatedField(
+		queryset=User.objects.all(),
+		default=serializers.CurrentUserDefault(),
+		slug_field='username',
+	)
+
 	class Meta:
-		fields = '__all__'
-		model = PurchaseList
+		fields = ['user', 'recipe']
+		model = Purchase
