@@ -5,7 +5,9 @@ from .models import Ingredient, Recipe, Tag, IngredientRecipe
 
 class IngredientAdmin(admin.ModelAdmin):
     model = Ingredient
-    search_fields = ['title', ]
+    search_fields = ('title',)
+    list_display = ("title", "dimension")
+    list_filter = ("title",)
 
 
 class IngredientRecipeAdmin(admin.ModelAdmin):
@@ -19,7 +21,20 @@ class IngredientRecipeInLine(admin.TabularInline):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    inlines = (IngredientRecipeInLine, )
+    model = Recipe
+
+    def favorites_count(self, obj):
+        return obj.liked.count()
+
+    favorites_count.short_description = "Favorites Count"
+
+    inlines = (IngredientRecipeInLine,)
+    # перечисляем поля, которые должны отображаться в админке
+    list_display = ("title", "author", "favorites_count")
+    # добавляем интерфейс для поиска по тексту постов
+    search_fields = ("text",)
+    # добавляем возможность фильтрации по дате
+    list_filter = ("author", "title", "tags")
 
 
 admin.site.register(Ingredient, IngredientAdmin)
