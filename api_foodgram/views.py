@@ -6,9 +6,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters
 from recipes.models import Ingredient, Recipe
 from users.models import Subscription, Purchase, Favorite
-from .permissions import IsAuthorOrReadOnlyPermission, IsAdminOrReadOnlyPermission
-from .serializers import IngredientSerializer, RecipeSerializer, \
-    SubscriptionSerializer, FavoriteSerializer, PurchaseSerializer
+from .permissions import IsAdminOrReadOnlyPermission
+from .serializers import IngredientSerializer, SubscriptionSerializer, FavoriteSerializer, PurchaseSerializer
 
 User = get_user_model()
 
@@ -21,31 +20,22 @@ class IngredientViewSet(viewsets.ModelViewSet):
     search_fields = ['title', ]
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
-    permission_classes = (IsAuthorOrReadOnlyPermission,)
-
-
 class SubscriptionViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     permission_classes = (IsAuthenticated,)
-    lookup_field = 'author_id'
+    lookup_field = 'author'
 
     def get_queryset(self):
         owner_queryset = self.queryset.filter(user=self.request.user)
         return owner_queryset
 
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+        username = self.kwargs.get('author')
+        author = get_object_or_404(User, username=username)
+        instance = get_object_or_404(Subscription, author=author, user=self.request.user)
         self.perform_destroy(instance)
         return Response({"deleted": "ok"}, status=status.HTTP_200_OK)
-
-    def perform_create(self, serializer):
-        author_id = self.request.data['id']
-        author = get_object_or_404(User, id=author_id)
-        serializer.save(author=author, user=self.request.user)
 
 
 class FavoritesViewSet(viewsets.ModelViewSet):

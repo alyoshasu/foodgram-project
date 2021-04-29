@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Tag, Recipe, IngredientRecipe
+from recipes.models import Ingredient, Recipe
 from users.models import Subscription, Purchase, Favorite
 User = get_user_model()
 
@@ -10,12 +10,6 @@ class IngredientSerializer(serializers.ModelSerializer):
 	class Meta:
 		fields = '__all__'
 		model = Ingredient
-
-
-class RecipeSerializer(serializers.ModelSerializer):
-	class Meta:
-		fields = '__all__'
-		model = Recipe
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -48,13 +42,11 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerializer(serializers.ModelSerializer):
 	author = serializers.SlugRelatedField(
-		read_only=True,
+		queryset=User.objects.all(),
 		slug_field='username',
 	)
-	user = serializers.SlugRelatedField(
-		queryset=User.objects.all(),
+	user = serializers.HiddenField(
 		default=serializers.CurrentUserDefault(),
-		slug_field='username',
 	)
 
 	class Meta:

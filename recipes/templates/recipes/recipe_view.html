@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="single-card" data-id="{{ recipe.title }}" data-author="{{ recipe.author.id }}">
+<div class="single-card" data-id="{{ recipe.title }}" data-author="{{ recipe.author.username }}">
     {% load thumbnail %}
     {% thumbnail recipe.image "480x480" upscale=True as im %}
     <img src="{{ im.url  }}" alt="какой-то текст" class="single-card__image">
