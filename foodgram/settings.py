@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework',
     'rest_framework.authtoken',
-    'api_foodgram.apps.ApiFoodgramConfig',
+    'api.apps.ApiFoodgramConfig',
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
     'sorl.thumbnail',

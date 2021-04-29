@@ -19,7 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('api/', include('api_foodgram.urls')),
+    path('api/', include('api.urls')),
     path('admin/', admin.site.urls, name='recipes_list'),
     path('', include('recipes.urls')),
     path('auth/', include('users.urls')),
