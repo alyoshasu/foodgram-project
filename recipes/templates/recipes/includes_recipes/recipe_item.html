@@ -1,6 +1,6 @@
 {% load user_filters %}
 {% load static %}
-<div class="card" data-id="{{ recipe.id }}">
+<div class="card" data-id="{{ recipe.title }}">
     <a href="{% url 'recipe' recipe.slug %}" class="link" target="_blank">
         {% load thumbnail %}
         {% thumbnail recipe.image "480x480" upscale=True as im %}

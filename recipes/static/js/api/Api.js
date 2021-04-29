@@ -25,7 +25,7 @@ class Api {
           'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
       },
       body: JSON.stringify({
-        id: id
+        recipe: id
       })
     })
       .then( e => {
@@ -43,12 +43,11 @@ class Api {
           'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
       }
     })
-      .then( e => {
-          if(e.ok) {
-              return e.json()
-          }
-          return Promise.reject(e.statusText)
-      })
+        .then( response => {
+            if(!response.ok) {
+                return Promise.reject(response.statusText)
+            }
+        })
   }
   addSubscriptions(id) {
     return fetch(`${this.apiUrl}/subscriptions`, {
@@ -91,7 +90,7 @@ class Api {
           'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
       },
       body: JSON.stringify({
-          id: id
+          recipe: id
       })
     })
         .then( e => {

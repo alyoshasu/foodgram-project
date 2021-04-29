@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework.relations import PrimaryKeyRelatedField
 
 from recipes.models import Ingredient, Tag, Recipe, IngredientRecipe
 from users.models import Subscription, Purchase, Favorite
@@ -13,44 +12,38 @@ class IngredientSerializer(serializers.ModelSerializer):
 		model = Ingredient
 
 
-class TagSerializer(serializers.ModelSerializer):
-	class Meta:
-		fields = '__all__'
-		model = Tag
-
-
 class RecipeSerializer(serializers.ModelSerializer):
 	class Meta:
 		fields = '__all__'
 		model = Recipe
 
 
-class IngredientRecipeSerializer(serializers.ModelSerializer):
-	class Meta:
-		fields = '__all__'
-		model = IngredientRecipe
-
-
-class Purchase_quantitySerializer(serializers.ModelSerializer):
-	class Meta:
-		fields = '__all__'
-		model = Purchase
-
-
 class FavoriteSerializer(serializers.ModelSerializer):
 	recipe = serializers.SlugRelatedField(
-		read_only=True,
+		queryset=Recipe.objects.all(),
 		slug_field='title',
 	)
-	user = serializers.SlugRelatedField(
-		queryset=User.objects.all(),
+	user = serializers.HiddenField(
 		default=serializers.CurrentUserDefault(),
-		slug_field='username',
 	)
 
 	class Meta:
 		fields = ['user', 'recipe']
 		model = Favorite
+
+
+class PurchaseSerializer(serializers.ModelSerializer):
+	recipe = serializers.SlugRelatedField(
+		queryset=Recipe.objects.all(),
+		slug_field='title',
+	)
+	user = serializers.HiddenField(
+		default=serializers.CurrentUserDefault(),
+	)
+
+	class Meta:
+		fields = ['user', 'recipe']
+		model = Purchase
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -68,24 +61,3 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 		fields = ['user', 'author']
 		model = Subscription
 
-
-class UserSerializer(serializers.ModelSerializer):
-	class Meta:
-		fields = '__all__'
-		model = User
-
-
-class PurchaseSerializer(serializers.ModelSerializer):
-	recipe = serializers.SlugRelatedField(
-		read_only=True,
-		slug_field='title',
-	)
-	user = serializers.SlugRelatedField(
-		queryset=User.objects.all(),
-		default=serializers.CurrentUserDefault(),
-		slug_field='username',
-	)
-
-	class Meta:
-		fields = ['user', 'recipe']
-		model = Purchase

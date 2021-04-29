@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="single-card" data-id="{{ recipe.id }}" data-author="{{ recipe.author.id }}">
+<div class="single-card" data-id="{{ recipe.title }}" data-author="{{ recipe.author.id }}">
     {% load thumbnail %}
     {% thumbnail recipe.image "480x480" upscale=True as im %}
     <img src="{{ im.url  }}" alt="какой-то текст" class="single-card__image">
@@ -45,7 +45,14 @@
         </div>
         <ul class="single-card__items">
             {% if user.is_authenticated %}
-                <li class="single-card__item"><button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button></li>
+                <li class="single-card__item">
+                    {% if recipe|is_purchase:request.user %}
+                        <button class="button button_style_blue-outline button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button>
+                    {% else %}
+                        <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button>
+                    {% endif %}
+{#                    <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span> Добавить в покупки</button>#}
+                </li>
                 {% if recipe.author|is_subscribed:request.user %}
                     <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe">Отписаться от автора</button></li>
                 {% else %}

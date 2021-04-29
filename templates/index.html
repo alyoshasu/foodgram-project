@@ -7,15 +7,6 @@
 
 {% block content %}
     {% include 'includes_main/menu.html' %}
-
-{#    <form method="get">#}
-{#        {{ filter.form.as_p }}#}
-{#        <input type="submit" />#}
-{#    </form>#}
-{#    {% for obj in filter.qs %}#}
-{#        {{ obj.title }} <br />#}
-{#    {% endfor %}#}
-
     <div class="card-list">
     {% for recipe in page %}
         {% include 'recipes/includes_recipes/recipe_item.html' %}
@@ -33,7 +24,7 @@
     <script src="{% static 'js/components/CardList.js' %}"></script>
     <script src="{% static 'js/components/Header.js' %}"></script>
     <script src="{% static 'js/api/Api.js' %}"></script>
-    {% if request.resolver_match.url_name == 'favorite' %}
+    {% if request.resolver_match.url_name == 'favorites' %}
         <script src="{% static 'js/components/Favorites.js' %}"></script>
         <script src="{% static 'favorite/favorite.js' %}"></script>
     {% elif request.resolver_match.url_name == 'profile' %}
