@@ -132,6 +132,12 @@ dmypy.json
 
 .temp
 temp/
+/media/
+/static/
+/html_finished/
 media/
 static/
 html_finished/
+.media/
+.static/
+.html_finished/
