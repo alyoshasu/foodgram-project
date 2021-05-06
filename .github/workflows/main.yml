@@ -42,7 +42,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: alyoshasu/yamdb_final:latest
+          tags: alyoshasu/foodgram:latest
 
   deploy:
     name: Copy of docker-compose file on server and deploy
@@ -56,6 +56,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
           source: "docker-compose.yaml, .env.template"
           target: "."
 
