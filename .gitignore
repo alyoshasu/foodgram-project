@@ -135,3 +135,7 @@ temp/
 /media/
 /static/
 /html_finished/
+
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
