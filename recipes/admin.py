@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Tag, IngredientRecipe
+from .models import Ingredient, IngredientRecipe, Recipe, Tag
 
 
 class IngredientAdmin(admin.ModelAdmin):
     model = Ingredient
-    search_fields = ('title',)
+    search_fields = ("title",)
     list_display = ("title", "dimension")
     list_filter = ("title",)
 

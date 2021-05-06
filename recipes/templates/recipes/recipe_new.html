@@ -16,8 +16,8 @@
         <div class="form__group">
             <label for="{{ form.title.id_for_label }}" class="form__label">Название рецепта</label>
             <div class="form__field-group">
-                <input type="text" id="{{ form.title.id_for_label }}" name="title" {% if form.title.value %} value={{form.title.value}} {% endif %} class="form__input">
-                <span class="form__error">{{form.title.errors}}</span>
+                <input type="text" id="{{ form.title.id_for_label }}" name="title" {% if form.title.value %} value={{ form.title.value }} {% endif %} class="form__input">
+                <span class="form__error">{{ form.title.errors }}</span>
             </div>
         </div>
         <div class="form__group">
@@ -37,7 +37,7 @@
                         <label for="id_tags_dinner" class="tags__label">Ужин</label>
                     </div>
                 </div>
-                <span class="form__error">{{form.tags.errors}}</span>
+                <span class="form__error">{{ form.tags.errors }}</span>
             </div>
         </div>
         <div class="form__group">
@@ -68,16 +68,16 @@
         <div class="form__group">
             <label for="id_time" class="form__label">Время приготовления</label>
             <div class="form__field-group form__field-group_time">
-                <input type="number" id="id_time" name="time" class="form__input" value={{form.time.value}} required>
+                <input type="number" min=1  id="id_time" name="time" class="form__input" value={% if form.time.value %} {{ form.time.value }} {% else %} 1 {% endif %} required>
                 <label for="id_time" class="form__label">минут</label>
-                <span class="form__error">{{form.time.errors}}</span>
+                <span class="form__error">{{ form.time.errors }}</span>
             </div>
         </div>
         <div class="form__group">
             <label for="id_description" class="form__label">Описание</label>
             <div class="form__field-group">
                 <textarea name="description" id="id_description" rows="8" class="form__textarea" required>{% if form.description.value %} {{form.description.value}} {% endif %}</textarea>
-                <span class="form__error">{{form.description.errors}}</span>
+                <span class="form__error">{{ form.description.errors}}</span>
             </div>
         </div>
         <div class="form__group">
@@ -85,14 +85,14 @@
             <div class="form__field-group">
                 <label for="id_image" class="form__file-button">Выбрать файл</label>
                 <input type="file" class="form__file" name="image" accept="image/*" id="id_image">
-                <span class="form__error">{{form.image.errors}}</span>
+                <span class="form__error">{{ form.image.errors }}</span>
             </div>
         </div>
         <div class="form__group">
             <label for="id_slug" class="form__label">Slug</label>
             <div class="form__field-group">
-                <input type="text" id="id_slug" name="slug" {% if form.slug.value %} value={{form.slug.value}} {% endif %} class="form__input">
-                <span class="form__error">{{form.slug.errors}}</span>
+                <input type="text" id="id_slug" name="slug" {% if form.slug.value %} value={{ form.slug.value }} {% endif %} class="form__input">
+                <span class="form__error">{{ form.slug.errors }}</span>
             </div>
         </div>
         <div class="form__footer">

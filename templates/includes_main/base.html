@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 {% load static %}
 {% csrf_token %}
 <head>
@@ -8,7 +8,6 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {% block head %}
-    <!-- Содержимое страницы -->
     <title>Рецепты</title>
     <link rel="stylesheet" href="{% static 'pages/index.css' %}">
     {% endblock %}
@@ -17,12 +16,10 @@
 {% include 'includes_main/nav.html' %}
 <main class="main container">
     {% block content %}
-    <!-- Содержимое страницы -->
     {% endblock %}
 </main>
 {% include 'includes_main/footer.html' %}
 {% block js %}
-<!-- Содержимое страницы -->
 {% endblock %}
 </body>
 </html>

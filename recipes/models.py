@@ -1,6 +1,6 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.core.validators import MinValueValidator
+from django.db import models
 
 User = get_user_model()
 
@@ -17,7 +17,7 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        ordering =('title', )
+        ordering = ('title', )
         verbose_name = 'ингредиент'
         verbose_name_plural = 'ингредиенты'
 
@@ -73,6 +73,7 @@ class Recipe(models.Model):
     )
     time = models.IntegerField(
         verbose_name="Время приготовления, мин",
+        validators=[MinValueValidator(1)],
     )
     slug = models.SlugField(
         max_length=100,
@@ -100,12 +101,22 @@ class IngredientRecipe(models.Model):
         Ingredient,
         on_delete=models.CASCADE,
     )
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(
+        validators=[MinValueValidator(1)],
+    )
 
     def __str__(self):
-        return '{} {} - {} в {}'.format(self.quantity, self.ingredient.dimension, self.ingredient.title, self.recipe.slug)
+        return '{} {} - {} в {}'.format(
+            self.quantity,
+            self.ingredient.dimension,
+            self.ingredient.title,
+            self.recipe.slug
+        )
 
     class Meta:
-        unique_together = ['recipe', 'ingredient']
-
-
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_IngredientRecipe'
+            )
+        ]

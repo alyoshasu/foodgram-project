@@ -9,7 +9,10 @@ def my_url(value, field_name, urlencode=None):
 
     if urlencode:
         querystring = urlencode.split('&')
-        filtered_querystring = filter(lambda p: p.split('=')[0] != field_name, querystring)
+        filtered_querystring = filter(
+            lambda p: p.split('=')[0] != field_name,
+            querystring
+        )
         encoded_querystring = '&'.join(filtered_querystring)
         url = '{}&{}'.format(url, encoded_querystring)
 
@@ -22,7 +25,10 @@ def add_tag(value, field_name, urlencode=None, add=True):
 
     if urlencode:
         querystring = urlencode.split('&')
-        filtered_querystring = filter(lambda p: p.split('=') != [field_name, str(value)], querystring)
+        filtered_querystring = filter(
+            lambda p: p.split('=') != [field_name, str(value)],
+            querystring
+        )
         encoded_querystring = '&'.join(filtered_querystring)
         if add:
             url = '{}&{}'.format(url, encoded_querystring)

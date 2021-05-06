@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from .models import Recipe, Ingredient, IngredientRecipe
+from .models import Recipe
 
 
 class RecipeForm(forms.ModelForm):
@@ -38,4 +38,3 @@ RecipeFormSet = inlineformset_factory(
         'quantity': 'Введите кол-во',
     }
 )
-# RecipeFormSet = inlineformset_factory(Ingredient, Recipe, fields=['recipe', 'ingredient', 'quantity'])

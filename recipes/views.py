@@ -1,23 +1,22 @@
+import io
+from datetime import datetime
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.shortcuts import render, get_object_or_404, redirect
-
-from reportlab.pdfgen import canvas
-from reportlab.pdfbase.ttfonts import TTFont
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
 
-from recipes.models import Recipe, IngredientRecipe, Ingredient
-
-from datetime import datetime
-
+from recipes.models import IngredientRecipe, Recipe
 from users.models import Purchase
+
 from .filters import RecipeFilter
 from .forms import RecipeForm
-
-import io
-from django.http import FileResponse
+from .utils import get_ingredients, generate_dict, render_ingredients_list
 
 User = get_user_model()
 
@@ -164,19 +163,6 @@ def recipe_new(request):
     )
 
 
-def get_ingredients(recipe_item, post_request):
-    ingredients_index = []
-
-    for key in post_request.keys():
-        if 'nameIngredient_' in str(key):
-            ingredients_index.append(key[15:])
-
-    for i in ingredients_index:
-        ingredient = get_object_or_404(Ingredient, title=post_request['nameIngredient_' + i])
-        quantity = post_request['valueIngredient_' + i]
-        recipe_item.ingredients.add(ingredient, through_defaults={'quantity': quantity})
-
-
 @login_required
 def recipe_edit(request, slug):
     edit_recipe = get_object_or_404(Recipe, slug=slug)
@@ -214,7 +200,12 @@ def recipe_edit(request, slug):
     with transaction.atomic():
         ingredient_list.delete()
         request_post = request.POST
-        get_ingredients(edit_recipe, request_post)
+        IngredientRecipe.objects.bulk_create(
+            get_ingredients(
+                edit_recipe,
+                request_post
+            )
+        )
         form.save()
 
     return redirect(
@@ -223,62 +214,35 @@ def recipe_edit(request, slug):
     )
 
 
-def render_ingredients_list(ingredient_list):
-    ingredients = {}
-    for i in range(len(ingredient_list)):
-        ingredients[str(i+1)] = [
-            ingredient_list[i].ingredient.title,
-            ingredient_list[i].quantity,
-            ingredient_list[i].ingredient.dimension
-        ]
-    return ingredients
-
-
 @login_required
 def list_download(request):
     output_dict = generate_dict(request.user)
     pdfmetrics.registerFont(TTFont('DejaVuSerif', './DejaVuSerif.ttf'))
 
-    # Create a file-like buffer to receive PDF data.
     buffer = io.BytesIO()
 
-    # Create the PDF object, using the buffer as its "file."
     p = canvas.Canvas(buffer)
     p.setFont("DejaVuSerif", 15)
 
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
     start = 800
     for key in output_dict.keys():
-        ingredient_line = r'{} - {}, {};'.format(key, output_dict[key][0], output_dict[key][1])
+        ingredient_line = r'{} - {}, {};'.format(
+            key,
+            output_dict[key][0],
+            output_dict[key][1]
+        )
         p.drawString(50, start, ingredient_line)
         start -= 20
 
-    # Close the PDF object cleanly, and we're done.
     p.showPage()
     p.save()
 
-    # FileResponse sets the Content-Disposition header so that browsers
-    # present the option to save the file.
     buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename='purchase_list.pdf')
-
-
-def generate_dict(user):
-    ingredients_quantity = {}
-    for purchase_item in user.purchases.all():
-        recipe_item = purchase_item.recipe
-        for ingredient_item in recipe_item.ingredients.all():
-            quantity = IngredientRecipe.objects.get(
-                    recipe=recipe_item,
-                    ingredient=ingredient_item
-                ).quantity
-            if ingredient_item.title in ingredients_quantity.keys():
-                ingredients_quantity[ingredient_item.title][0] += quantity
-            else:
-                ingredients_quantity[ingredient_item.title] = [quantity, ingredient_item.dimension]
-
-    return ingredients_quantity
+    return FileResponse(
+        buffer,
+        as_attachment=True,
+        filename='purchase_list.pdf'
+    )
 
 
 @login_required

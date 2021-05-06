@@ -1,6 +1,6 @@
 from django import template
 
-from users.models import Favorite, Subscription, Purchase
+from users.models import Favorite, Purchase, Subscription
 
 register = template.Library()
 
@@ -9,10 +9,6 @@ register = template.Library()
 def addclass(field, css):
     return field.as_widget(attrs={"class": css})
 
-
-# @register.filter
-# def userfilter(objects, user):
-# 	return objects.filter(user=user)
 
 @register.filter
 def is_favorite(recipe, user):
@@ -33,4 +29,3 @@ def is_subscribed(author, user):
     if not Subscription.objects.filter(author=author, user=user):
         return False
     return Subscription.objects.get(author=author, user=user).id
-
