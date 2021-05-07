@@ -33,7 +33,7 @@ services:
     volumes:
       - nginx_config:/etc/nginx/conf.d
       - static_volume:/var/www/static
-      - media_volume:/var/ww/media
+      - media_volume:/var/www/media
     ports:
       - "80:80"
     depends_on:
