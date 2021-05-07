@@ -64,7 +64,7 @@ sudo docker-compose exec web python manage.py collectstatic --noinput
 Для загрузки ингредиентов запустите следующую команду:
 
 ```
-sudo docker-compose exec web python manage.py add_ingredient
+sudo docker-compose exec web python manage.py add_ingredients
 ```
 
 Для создания суперпользователя запустите следующую команду:

@@ -11,7 +11,7 @@
 <div class="single-card" data-id="{{ recipe.title }}" data-author="{{ recipe.author.username }}">
     {% load thumbnail %}
     {% thumbnail recipe.image "480x480" upscale=True as im %}
-    <img src="{{ im.url  }}" alt="какой-то текст" class="single-card__image">
+    <img src="{{ im.url  }}" alt="{{ recipe.title }}" class="single-card__image" width="480" height="480">
     {% endthumbnail %}
     <div class="single-card__info">
         <div class="single-card__header-info">

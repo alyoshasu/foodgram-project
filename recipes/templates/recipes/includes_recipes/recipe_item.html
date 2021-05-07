@@ -3,7 +3,7 @@
 <div class="card" data-id="{{ recipe.title }}">
     {% load thumbnail %}
     {% thumbnail recipe.image "480x480" upscale=True as im %}
-        <a href="{{ recipe.get_absolute_url }}" class="link" target="_blank">
+        <a href="{% url 'recipe' recipe.slug %}" class="link" target="_blank">
             <img src="{{ im.url  }}" alt="{{ recipe.title }}" class="card__image" width="480" height="480">
         </a>
     {% endthumbnail %}
