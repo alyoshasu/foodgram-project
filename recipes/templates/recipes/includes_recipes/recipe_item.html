@@ -1,12 +1,13 @@
 {% load user_filters %}
 {% load static %}
 <div class="card" data-id="{{ recipe.title }}">
-    <a href="{% url 'recipe' recipe.slug %}" class="link" target="_blank">
-        {% load thumbnail %}
-        {% thumbnail recipe.image "480x480" upscale=True as im %}
-        <img src="{{ im.url  }}" alt="Какой-то текст" class="card__image">
-        {% endthumbnail %}
-    </a>
+    {% load thumbnail %}
+    {% thumbnail recipe.image "480x480" upscale=True as im %}
+        <a href="{{ recipe.get_absolute_url }}" class="link" target="_blank">
+            <img src="{{ im.url  }}" alt="{{ recipe.title }}" class="card__image" width="480" height="480">
+        </a>
+    {% endthumbnail %}
+
     <div class="card__body">
         <a class="card__title link" href="{% url 'recipe' recipe.slug %}" target="_blank">{{ recipe.title }}</a>
         <ul class="card__items">
