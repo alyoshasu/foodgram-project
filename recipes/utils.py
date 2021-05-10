@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from recipes.models import IngredientRecipe, Ingredient
 
 
-def get_ingredients(recipe_item, post_request):
+def get_ingredients_dict(post_request):
     ingredients = {}
 
     for key, name in post_request.items():
@@ -11,11 +11,13 @@ def get_ingredients(recipe_item, post_request):
             num = key.partition('_')[-1]
             ingredients[name] = post_request[f'valueIngredient_{num}']
 
+    return ingredients
+
+
+def create_ingredients_objs(recipe_item, ingredients):
     objs = []
 
     for name, quantity in ingredients.items():
-        if quantity <= 0:
-            return False
 
         ingredient = get_object_or_404(
             Ingredient,
@@ -32,7 +34,7 @@ def get_ingredients(recipe_item, post_request):
     return objs
 
 
-def render_ingredients_list(ingredient_list):
+def render_ingredients_dict_for_edit(ingredient_list):
     ingredients = {}
     for i in range(len(ingredient_list)):
         ingredients[str(i+1)] = [
@@ -41,6 +43,23 @@ def render_ingredients_list(ingredient_list):
             ingredient_list[i].ingredient.dimension
         ]
     return ingredients
+
+
+def render_ingredients_dict_for_new(ingredients_dict):
+    k = 1
+    ingredients = {}
+    for key in ingredients_dict.keys():
+        dimension = get_object_or_404(Ingredient, title=key).dimension
+        ingredients[k] = [key, ingredients_dict[key], dimension]
+        k += 1
+    return ingredients
+
+
+def ingredients_check(ingredients):
+    for key in ingredients.keys():
+        if int(ingredients[key][1]) <= 0:
+            return True
+    return False
 
 
 def generate_dict(user):

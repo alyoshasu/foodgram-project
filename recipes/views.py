@@ -1,5 +1,6 @@
 import io
 from datetime import datetime
+from functools import reduce
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -12,12 +13,13 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 from foodgram.settings import RECIPES_PER_PAGE
-from recipes.models import IngredientRecipe, Recipe
+from recipes.models import IngredientRecipe, Recipe, Ingredient
 from users.models import Purchase
 
 from .filters import RecipeFilter
 from .forms import RecipeForm
-from .utils import get_ingredients, generate_dict, render_ingredients_list
+from .utils import get_ingredients_dict, generate_dict, render_ingredients_dict_for_edit, create_ingredients_objs, \
+    render_ingredients_dict_for_new, ingredients_check
 
 User = get_user_model()
 
@@ -124,7 +126,6 @@ def follow(request):
 def recipe_new(request):
     if not request.method == 'POST':
         form = RecipeForm()
-
         return render(
             request,
             'recipes/recipe_new.html',
@@ -136,16 +137,27 @@ def recipe_new(request):
 
     form = RecipeForm(
         request.POST,
-        files=request.FILES or None,
+        request.FILES or None,
     )
 
-    if not form.is_valid():
+    request_post = request.POST
+    ingredients_dict = get_ingredients_dict(
+        request_post,
+    )
+
+    ingredients = render_ingredients_dict_for_new(ingredients_dict)
+
+    ingredient_error = ingredients_check(ingredients)
+
+    if not form.is_valid() or not ingredient_error:
         return render(
             request,
             'recipes/recipe_new.html',
             {
                 'form': form,
                 'is_edit': False,
+                'ingredients': ingredients,
+                'ingredient_error': ingredient_error,
             },
         )
 
@@ -153,17 +165,17 @@ def recipe_new(request):
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
         new_recipe.pub_date = datetime.now()
-        request_post = request.POST
+
+        # request_post = request.POST
         new_recipe.save()
-        # get_ingredients(new_recipe, request_post)
-        # form.save_m2m()
+        # ingredients_dict = get_ingredients_dict(
+        #     request_post,
+        # )
+        ingredients = create_ingredients_objs(new_recipe, ingredients_dict)
         IngredientRecipe.objects.bulk_create(
-            get_ingredients(
-                new_recipe,
-                request_post
-            )
+            ingredients
         )
-        form.save()
+        form.save_m2m()
 
     return redirect(
         'recipe',
@@ -175,7 +187,7 @@ def recipe_new(request):
 def recipe_edit(request, slug):
     edit_recipe = get_object_or_404(Recipe, slug=slug)
     ingredient_list = IngredientRecipe.objects.filter(recipe=edit_recipe)
-    ingredients = render_ingredients_list(ingredient_list)
+    ingredients = render_ingredients_dict_for_edit(ingredient_list)
     if not edit_recipe.author == request.user:
         return redirect('recipe', slug=slug)
     form = RecipeForm(
@@ -195,24 +207,29 @@ def recipe_edit(request, slug):
              }
         )
 
-    if not form.is_valid():
+    ingredient_error = ingredients_check(ingredients)
+
+    if not form.is_valid() or not ingredient_error:
         return render(
             request,
             'recipes/recipe_new.html',
             {'recipe': edit_recipe,
              'form': form,
              'is_edit': True,
+             'ingredients': ingredients,
+             'ingredient_error': ingredient_error,
              }
         )
 
     with transaction.atomic():
         ingredient_list.delete()
         request_post = request.POST
+        ingredients_dict = get_ingredients_dict(
+            request_post,
+        )
+        ingredients = create_ingredients_objs(edit_recipe, ingredients_dict)
         IngredientRecipe.objects.bulk_create(
-            get_ingredients(
-                edit_recipe,
-                request_post
-            )
+            ingredients
         )
         form.save()
 

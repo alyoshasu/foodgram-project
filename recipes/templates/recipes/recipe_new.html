@@ -10,9 +10,9 @@
     <h1 class="main__title">{% if is_edit %} Редактирование рецепта {% else %} Создание рецепта {% endif %}</h1>
 </div>
 <div class="form-container">
+{#{{ form.as_p }}#}
     <form class="form" method="post" action="{% if is_edit %}{% url 'recipe_edit' recipe.slug %}{% else %}{% url 'recipe_new' %}{% endif %}" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.errors }}
         <div class="form__group">
             <label for="{{ form.title.id_for_label }}" class="form__label">Название рецепта</label>
             <div class="form__field-group">
@@ -52,17 +52,17 @@
                     <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                 </div>
                 <div class="form__field-group-ingredientes-container">
-                    {% if is_edit %}{% for i, value in ingredients.items %}
+                    {% for i, value in ingredients.items %}
                         <div class="form__field-item-ingredient" id="ing_2">
                             <span> {{ value.0 }} {{ value.1 }}{{ value.2 }}</span> <span class="form__field-item-delete"></span>
                             <input id="nameIngredient_{{ i }}" name="nameIngredient_{{ i }}" type="hidden" value="{{ value.0 }}">
                             <input id="valueIngredient_{{ i }}" name="valueIngredient_{{ i }}" type="hidden" value="{{ value.1 }}">
                             <input id="unitsIngredient_{{ i }}" name="unitsIngredient_{{ i }}" type="hidden" value="{{ value.2 }}">`
                         </div>
-                    {% endfor %}{% endif %}
+                    {% endfor %}
                 </div>
                 <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
-                <span class="form__error"></span>
+                <span class="form__error">{% if ingredient_error %} Кол-во ингредиентов должно быть положительным {% endif %}</span>
             </div>
         </div>
         <div class="form__group">
@@ -81,10 +81,13 @@
             </div>
         </div>
         <div class="form__group">
+            <input type="file" name="image" accept="image/*" required="" id="id_image">
+        </div>
+        <div class="form__group">
             <span class="form__label">Загрузить фото</span>
             <div class="form__field-group">
                 <label for="id_image" class="form__file-button">Выбрать файл</label>
-                <input type="file" class="form__file" name="image" accept="image/*" id="id_image">
+                <input type="file" class="form__file" name="image" accept="image/*" required id="id_image">
                 <span class="form__error">{{ form.image.errors }}</span>
             </div>
         </div>
