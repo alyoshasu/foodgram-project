@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = '85$_w)*+*d-1f&hvb8v8(alyxln713822qlc^w&8b56=oqkic6'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -114,8 +114,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'foodgram.adm@gmail.com'
-EMAIL_HOST_PASSWORD = 'z;W/e)[7$$'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER'),
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD'),
 
 
 REST_FRAMEWORK = {

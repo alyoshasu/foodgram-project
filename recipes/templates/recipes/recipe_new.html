@@ -10,7 +10,6 @@
     <h1 class="main__title">{% if is_edit %} Редактирование рецепта {% else %} Создание рецепта {% endif %}</h1>
 </div>
 <div class="form-container">
-{#{{ form.as_p }}#}
     <form class="form" method="post" action="{% if is_edit %}{% url 'recipe_edit' recipe.slug %}{% else %}{% url 'recipe_new' %}{% endif %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form__group">
@@ -81,13 +80,10 @@
             </div>
         </div>
         <div class="form__group">
-            <input type="file" name="image" accept="image/*" required="" id="id_image">
-        </div>
-        <div class="form__group">
             <span class="form__label">Загрузить фото</span>
             <div class="form__field-group">
                 <label for="id_image" class="form__file-button">Выбрать файл</label>
-                <input type="file" class="form__file" name="image" accept="image/*" required id="id_image">
+                <input type="file" class="form__file" name="image" accept="image/*" id="id_image">
                 <span class="form__error">{{ form.image.errors }}</span>
             </div>
         </div>

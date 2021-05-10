@@ -126,6 +126,7 @@ def follow(request):
 def recipe_new(request):
     if not request.method == 'POST':
         form = RecipeForm()
+
         return render(
             request,
             'recipes/recipe_new.html',
@@ -149,7 +150,7 @@ def recipe_new(request):
 
     ingredient_error = ingredients_check(ingredients)
 
-    if not form.is_valid() or not ingredient_error:
+    if not form.is_valid() or ingredient_error:
         return render(
             request,
             'recipes/recipe_new.html',
@@ -165,12 +166,7 @@ def recipe_new(request):
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
         new_recipe.pub_date = datetime.now()
-
-        # request_post = request.POST
         new_recipe.save()
-        # ingredients_dict = get_ingredients_dict(
-        #     request_post,
-        # )
         ingredients = create_ingredients_objs(new_recipe, ingredients_dict)
         IngredientRecipe.objects.bulk_create(
             ingredients
@@ -186,8 +182,6 @@ def recipe_new(request):
 @login_required
 def recipe_edit(request, slug):
     edit_recipe = get_object_or_404(Recipe, slug=slug)
-    ingredient_list = IngredientRecipe.objects.filter(recipe=edit_recipe)
-    ingredients = render_ingredients_dict_for_edit(ingredient_list)
     if not edit_recipe.author == request.user:
         return redirect('recipe', slug=slug)
     form = RecipeForm(
@@ -196,7 +190,10 @@ def recipe_edit(request, slug):
         instance=edit_recipe,
     )
 
+    ingredient_list = IngredientRecipe.objects.filter(recipe=edit_recipe)
+
     if not request.method == 'POST':
+        ingredients = render_ingredients_dict_for_edit(ingredient_list)
         return render(
             request,
             'recipes/recipe_new.html',
@@ -207,9 +204,17 @@ def recipe_edit(request, slug):
              }
         )
 
+    request_post = request.POST
+
+    ingredients_dict = get_ingredients_dict(
+        request_post,
+    )
+
+    ingredients = render_ingredients_dict_for_new(ingredients_dict)
+
     ingredient_error = ingredients_check(ingredients)
 
-    if not form.is_valid() or not ingredient_error:
+    if not form.is_valid() or ingredient_error:
         return render(
             request,
             'recipes/recipe_new.html',
@@ -223,10 +228,6 @@ def recipe_edit(request, slug):
 
     with transaction.atomic():
         ingredient_list.delete()
-        request_post = request.POST
-        ingredients_dict = get_ingredients_dict(
-            request_post,
-        )
         ingredients = create_ingredients_objs(edit_recipe, ingredients_dict)
         IngredientRecipe.objects.bulk_create(
             ingredients
