@@ -11,6 +11,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
+from foodgram.settings import RECIPES_PER_PAGE
 from recipes.models import IngredientRecipe, Recipe
 from users.models import Purchase
 
@@ -28,7 +29,7 @@ def index(request):
         queryset=recipe_list,
     )
 
-    paginator = Paginator(filtered_recipes.qs, 6)
+    paginator = Paginator(filtered_recipes.qs, RECIPES_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -50,7 +51,7 @@ def profile(request, username):
         queryset=user_recipes,
     )
 
-    paginator = Paginator(filtered_recipes.qs, 6)
+    paginator = Paginator(filtered_recipes.qs, RECIPES_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -73,7 +74,7 @@ def favorite(request):
         queryset=favorite_list,
     )
 
-    paginator = Paginator(filtered_recipes.qs, 6)
+    paginator = Paginator(filtered_recipes.qs, RECIPES_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -105,7 +106,7 @@ def recipe(request, slug):
 @login_required
 def follow(request):
     follow_list = User.objects.filter(following__user=request.user)
-    paginator = Paginator(follow_list, 6)
+    paginator = Paginator(follow_list, RECIPES_PER_PAGE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
@@ -154,8 +155,15 @@ def recipe_new(request):
         new_recipe.pub_date = datetime.now()
         request_post = request.POST
         new_recipe.save()
-        get_ingredients(new_recipe, request_post)
-        form.save_m2m()
+        # get_ingredients(new_recipe, request_post)
+        # form.save_m2m()
+        IngredientRecipe.objects.bulk_create(
+            get_ingredients(
+                new_recipe,
+                request_post
+            )
+        )
+        form.save()
 
     return redirect(
         'recipe',

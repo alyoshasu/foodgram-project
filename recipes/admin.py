@@ -29,11 +29,8 @@ class RecipeAdmin(admin.ModelAdmin):
     favorites_count.short_description = "Favorites Count"
 
     inlines = (IngredientRecipeInLine,)
-    # перечисляем поля, которые должны отображаться в админке
     list_display = ("title", "author", "favorites_count")
-    # добавляем интерфейс для поиска по тексту постов
     search_fields = ("text",)
-    # добавляем возможность фильтрации по дате
     list_filter = ("author", "title", "tags")
 
 

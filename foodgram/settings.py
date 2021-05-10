@@ -122,11 +122,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
-
-    # это ломает JS при создании рецепта, так что оставлю как есть
-    # 'DEFAULT_PAGINATION_CLASS':
-    # 'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 50
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+RECIPES_PER_PAGE = 6

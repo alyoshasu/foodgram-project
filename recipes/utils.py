@@ -14,6 +14,9 @@ def get_ingredients(recipe_item, post_request):
     objs = []
 
     for name, quantity in ingredients.items():
+        if quantity <= 0:
+            return False
+
         ingredient = get_object_or_404(
             Ingredient,
             title=name,

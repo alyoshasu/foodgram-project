@@ -7,7 +7,7 @@
                 <li class="nav__item {% if request.resolver_match.url_name == 'follow' %} nav__item_active {% else %} nav__item_disabled {% endif %}"><a href="{% url 'follow' %}" class="nav__link link">Мои подписки</a></li>
                 <li class="nav__item {% if request.resolver_match.url_name == 'recipe_new' %} nav__item_active {% else %} nav__item_disabled {% endif %}"><a href="{% url 'recipe_new' %}" class="nav__link link">Создать рецепт</a></li>
                 <li class="nav__item {% if request.resolver_match.url_name == 'favorites' %} nav__item_active {% else %} nav__item_disabled {% endif %}"><a href="{% url 'favorites' %}" class="nav__link link">Избранное</a></li>
-                <li class="nav__item {% if request.resolver_match.url_name == 'purchase' %} nav__item_active {% else %} nav__item_disabled {% endif %}"><a href="{% url 'purchase' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{% if request.user.purchases.count > 0 %}{{ request.user.purchases.count }}{% endif %}</span></li>
+                <li class="nav__item {% if request.resolver_match.url_name == 'purchase' %} nav__item_active {% else %} nav__item_disabled {% endif %}">{% if request.user.purchases.count > 0 %}<a href="{% url 'purchase' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ request.user.purchases.count }}</span>{% else %}<a class="nav__link link">Вы можете добавить рецепты в список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter"></span>{% endif %}</li>
 
             </ul>
             <ul class="nav__items list">

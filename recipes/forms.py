@@ -11,18 +11,15 @@ class RecipeForm(forms.ModelForm):
             'title',
             'image',
             'description',
-            # 'ingredients',
             'tags',
             'time',
             'slug',
         ]
-        # widgets = {'tags': forms.CheckboxSelectMultiple()}
 
     help_texts = {
         'title': 'Введите название вашего рецепта',
         'image': 'Добавьте изображение',
         'description': 'Введите описание вашего рецепта',
-        # 'ingredients': 'Список ингредиентов',
         'tags': 'Теги',
         'time': 'Время приготовления',
         'slug:': 'описание для ссылки',
