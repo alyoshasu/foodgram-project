@@ -167,6 +167,9 @@ def recipe_new(request):
         new_recipe.author = request.user
         new_recipe.pub_date = datetime.now()
         new_recipe.save()
+        ingredients_dict = get_ingredients_dict(
+            request_post,
+        )
         ingredients = create_ingredients_objs(new_recipe, ingredients_dict)
         IngredientRecipe.objects.bulk_create(
             ingredients
@@ -228,6 +231,9 @@ def recipe_edit(request, slug):
 
     with transaction.atomic():
         ingredient_list.delete()
+        ingredients_dict = get_ingredients_dict(
+            request_post,
+        )
         ingredients = create_ingredients_objs(edit_recipe, ingredients_dict)
         IngredientRecipe.objects.bulk_create(
             ingredients
