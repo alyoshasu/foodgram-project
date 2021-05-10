@@ -70,5 +70,6 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose stop
+            sudo docker-compose pull
             sudo docker-compose up --force-recreate --build -d
             sudo docker image prune -f
