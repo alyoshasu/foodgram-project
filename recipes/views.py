@@ -1,6 +1,5 @@
 import io
 from datetime import datetime
-from functools import reduce
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -13,12 +12,13 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 from foodgram.settings import RECIPES_PER_PAGE
-from recipes.models import IngredientRecipe, Recipe, Ingredient
+from recipes.models import IngredientRecipe, Recipe
 from users.models import Purchase
 
 from .filters import RecipeFilter
 from .forms import RecipeForm
-from .utils import get_ingredients_dict, generate_dict, render_ingredients_dict_for_edit, create_ingredients_objs, \
+from .utils import get_ingredients_dict, generate_dict, \
+    render_ingredients_dict_for_edit, create_ingredients_objs, \
     render_ingredients_dict_for_new, ingredients_check
 
 User = get_user_model()
