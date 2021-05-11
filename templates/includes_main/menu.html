@@ -32,7 +32,7 @@
 {% if request.resolver_match.url_name == 'profile' %}
     {% if not author == request.user %}
         {% if user.is_authenticated %}
-            <div class="author-subscribe" data-author="{{ author.id }}">
+            <div class="author-subscribe" data-author="{{ author.username }}">
             {% if author|is_subscribed:request.user %}
                 <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe">Отписаться от автора</button></p>
             {% else %}
