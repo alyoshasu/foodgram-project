@@ -29,7 +29,8 @@
         </li>
     </ul>
 </div>
-    {% if request.resolver_match.url_name == 'profile' %}
+{% if request.resolver_match.url_name == 'profile' %}
+    {% if not recipe.author == request.user %}
         {% if user.is_authenticated %}
             <div class="author-subscribe" data-author="{{ author.id }}">
             {% if author|is_subscribed:request.user %}
@@ -40,3 +41,4 @@
             </div>
         {% endif %}
     {% endif %}
+{% endif %}
