@@ -9,6 +9,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['84.252.134.216']
 
+SITE_ID = 1
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -133,5 +135,3 @@ REST_FRAMEWORK = {
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 RECIPES_PER_PAGE = 6
-
-SITE_ID = 1
