@@ -34,9 +34,9 @@
         {% if user.is_authenticated %}
             <div class="author-subscribe" data-author="{{ author.username }}">
             {% if author|is_subscribed:request.user %}
-                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe">Отписаться от автора</button></p>
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe" onClick="setTimeout('history.go(0); window.location.reload();',500);">Отписаться от автора</button></p>
             {% else %}
-                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out onClick="setTimeout('history.go(0); window.location.reload();',500);">Подписаться на автора</button></p>
             {% endif %}
             </div>
         {% endif %}

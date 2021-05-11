@@ -54,9 +54,9 @@
                 </li>
                 {% if not recipe.author == request.user %}
                     {% if recipe.author|is_subscribed:request.user %}
-                        <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe">Отписаться от автора</button></li>
+                        <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe button_style_blue" name="subscribe" onClick="setTimeout('history.go(0); window.location.reload();',500);">Отписаться от автора</button></li>
                     {% else %}
-                        <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
+                        <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out onClick="setTimeout('history.go(0); window.location.reload();',500);">Подписаться на автора</button></li>
                     {% endif %}
                 {% endif %}
             {% endif %}
