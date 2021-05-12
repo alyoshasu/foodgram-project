@@ -1,5 +1,4 @@
-![foodgram workflow](https://github.com/alyoshasu/foodgram-project/actions/workflows/foodgram_workflow.yaml/badge.svg)
-
+[![foodgram workflow](https://github.com/alyoshasu/foodgram-project/actions/workflows/main.yml/badge.svg)](https://github.com/alyoshasu/foodgram-project/actions/workflows/main.yml)
 
 # «Продуктовый помощник»
 Это онлайн-сервис, где пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
